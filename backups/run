@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+# Run this on the backup server (not the redirect server) to make backups.
+
+# Define the directory for storing the backup.
+BACKUP_ROOT="${HOME}/Backups/redirect.thomaslevine.com
+backup_dir="${BACKUP_DIR}"/$(date -I)
+[ -e "${backup_dir}" ] && echo Backup has already run today && exit 1
+
+(
+  mkdir -p "${backup_dir}"
+  cd 
+  mkdir etc
+  mkdir -p var/log
+
+  # -p Preserve modification times, &c.
+  # -c Enable compression
+  # -r Recurse
+
+  # Nginx configuration, including redirects
+  scp -cpr redirect.thomaslevine.com:/etc/nginx etc
+
+  # Nginx logs
+  scp -cpr redirect.thomaslevine.com:/var/log/nginx var/log
+)
