@@ -55,18 +55,62 @@ world's caches. Either way, follow
 
 ## How to use: Set up the redirect
 
+You can set up the redirect with a web page that works like you expect. If
+you want something fancier or more automatic, use the the API. The form calls
+the API, in case you're curious.
+
 ### Via the GUI
 
 Go to [redirect.thomaslevine.com](http://redirect.thomaslevine.com), and fill
-out the form. (This form calls the API that is documented below.) You will land
-at another page. **Save that page's URL.** You'll need it if you ever want to
-change the redirect.
+out the form. It contains two fields
+
+1. **from** is the site that people type in to their URL bar; it's the thing
+    you added an A record to the zone file (see above) for.
+2. **to** is the place where they should land; it's where you are already
+    hosting the site.
+
+You will land at another page. **Save that page's URL**; The identifier at the
+end is like a password, so you'll need it if you ever want to change the
+redirect.
 
 ### Via the API
+Choose an identifier for your redirect. This acts as a password, so you should
+choose something that other people won't guess or choose accidentally. Bad
+identifiers include "website" and "thomaslevine.com". Good ones include
+"UDSkS9XH8w07Fq98Jue3aU" and "thomaslevine.com-dear badly pain blanket". You
+can find more good identifiers
+[here](http://preshing.com/20110811/xkcd-password-generator).
+Now that you've chosen an identifier, this is the URL that should concern you
 
+    http://redirect.thomaslevine.com/v1/redirect/<identifier>
 
+You can **create**, **edit** and **delete** the redirect by making HTTP
+requests to this URL. Examples follow.
 
+**Create** a redirect from "thomaslevine.com" to "www.thomaslevine.com"
 
+    curl \ 
+    --data from=<from address, like "thomaslevine.com"> \ 
+    --data to=<to address, like "www.thomaslevine.com"> \
+    http://redirect.thomaslevine.com/v1/redirect/sho+ue8ohn,.n237fun
 
+You may also specify an HTTP status code for the redirect; the default is 303,
+which functions as a temporary redirect. You may also specify 301, which is a
+permanent redirect.
+
+    curl \ 
+    --data from=<from address, like "thomaslevine.com"> \ 
+    --data to=<to address, like "www.thomaslevine.com"> \
+    --data status_code=301
+    http://redirect.thomaslevine.com/v1/redirect/sho+ue8ohn,.n237fun
+
+The default status code is 303. If 303 is specified, the redirect server will
+be called every time a browser tries to go to your website. If you specify 301,
+the redirect will be cached within the browser, so the server will not be
+called. It would be reasonable to use 303 for testing and 301 once it seems to
+work. Tell me if you want options for other status codes.
 
 ## Technical details
+
+This runs on a tiny server from Prometeus. The API is a CGI script that runs
+with fcgiwrap on nginx and edits nginx sites; each redirect is a site.
