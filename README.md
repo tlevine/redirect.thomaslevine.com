@@ -17,10 +17,17 @@ or a bigger server, I'll need figure out how to make it sustainable, but it
 would still certainly be cheap.
 
 ## What do I mean by "HTTP redirects"?
-Here's the most common sort of HTTP redirect: I own thomaslevine.com, I host
-a website at www.thomaslevine.com, and I want thomaslevine.com and
-www.thomaslevine.com to go to the same place, so I make thomaslevine.com
-redirect to www.thomaslevine.com.
+Here's the most common sort of HTTP redirect: I own
+[thomaslevine.com](http://thomaslevine.com),
+I host a website at
+[www.thomaslevine.com](http://www.thomaslevine.com),
+and I want
+[thomaslevine.com](http://thomaslevine.com) and
+[www.thomaslevine.com](http://www.thomaslevine.com)
+to go to the same place, so I make
+[thomaslevine.com](http://thomaslevine.com)
+redirect to
+[www.thomaslevine.com](http://www.thomaslevine.com).
 
 More technically, this currently includes HTTP responses with codes of 301
 and 303, but it could include more. The relevant part is that these are tiny
