@@ -84,7 +84,7 @@ can find more good identifiers
 [here](http://preshing.com/20110811/xkcd-password-generator).
 Now that you've chosen an identifier, this is the URL that should concern you
 
-    http://redirect.thomaslevine.com/v1/redirects/<identifier>
+    http://redirect.thomaslevine.com/v1/<identifier>
 
 You can **create**, **edit**, **read** and **delete** the redirect by making
 HTTP requests to this URL. Examples follow.
@@ -98,7 +98,7 @@ like so.
     curl -X PUT\ 
     --data from=<from address, like "thomaslevine.com"> \ 
     --data to=<to address, like "www.thomaslevine.com"> \
-    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
 You may also specify an HTTP status code and email address for the redirect.
 
@@ -107,7 +107,7 @@ You may also specify an HTTP status code and email address for the redirect.
     --data to="www.thomaslevine.com" \
     --data status_code=301 \
     --data email=occurrence@example.com \
-    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
 Regardless of whether you provide an **email address**, I might contact you to
 figure out how I can make this better. If you provide an email address, this
@@ -131,7 +131,7 @@ You can edit a redirect by making a PUT request just like you created it.
     --data from="thomaslevine.com" \ 
     --data to="www.thomaslevine.com" \
     --data status_code=303 \
-    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
 If you would like to edit just one field, you can also use a POST instead.
 
@@ -140,22 +140,22 @@ If you would like to edit just one field, you can also use a POST instead.
     --data from="thomaslevine.com" \ 
     --data to="www.thomaslevine.com" \
     --data status_code=303 \
-    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
     # This is valid.
     curl -X POST \ 
     --data status_code=303 \
-    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
     # This is not valid.
     curl -X PUT \ 
     --data status_code=303 \
-    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
 #### Read
 Run something like this to read the redirect configuration of the redirect.
 
-    curl http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    curl http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
 You'll get something like this.
 
@@ -174,7 +174,7 @@ something like this
 
 **Delete** the redirect configuration like so.
 
-    curl -X DELETE http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+    curl -X DELETE http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
 ## Technical details
 This runs on a tiny server from Prometeus. The API is a CGI script that runs
