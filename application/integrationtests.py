@@ -72,6 +72,23 @@ class TestAPI:
 
         assert_dict_equal(post_data, get_data)
 
+    def test_post_twice(self):
+        'If I post twice, the first should be 201 and the second should be 200'
+        params = {
+            'from': 'example.com',
+            'to': 'www.example.com',
+        }
+
+        creation = requests.post(API_URL, params)
+        sleep(5)
+        modification = requests.post(API_URL, params)
+        assert_equal(creation.status_code, 201)
+        assert_equal(modification.status_code, 200)
+
+    def test_put_post(self):
+
+    def test_delete(self):
+        'I should be able to create a redirect and then delete it.'
 
     def test_post_missing_fields(self):
         "An invalid post should say what fields are missing."

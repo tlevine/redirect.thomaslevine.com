@@ -89,20 +89,22 @@ Now that you've chosen an identifier, this is the URL that should concern you
 You can **create**, **edit**, **read** and **delete** the redirect by making
 HTTP requests to this URL. Examples follow.
 
-#### Create or edit
-Create or edit a redirect from "[thomaslevine.com](http://thomaslevine.com)" to "[www.thomaslevine.com](http://www.thomaslevine.com)"
+#### Create
+Create a redirect from
+"[thomaslevine.com](http://thomaslevine.com)" to
+"[www.thomaslevine.com](http://www.thomaslevine.com)"
 like so.
 
-    curl \ 
+    curl -X PUT\ 
     --data from=<from address, like "thomaslevine.com"> \ 
     --data to=<to address, like "www.thomaslevine.com"> \
     http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
 
 You may also specify an HTTP status code and email address for the redirect.
 
-    curl \ 
-    --data from=<from address, like "thomaslevine.com"> \ 
-    --data to=<to address, like "www.thomaslevine.com"> \
+    curl -X PUT\ 
+    --data from="thomaslevine.com" \ 
+    --data to="www.thomaslevine.com" \
     --data status_code=301 \
     --data email=occurrence@example.com \
     http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
@@ -120,6 +122,35 @@ ever-so-slightly faster, reduce my load ever-so-slightly, and make your site
 ever-so-slightly more robust in case of outages of my server. It would be
 reasonable to use 303 for testing and 301 once it seems to work. And tell me
 if you want options for other status codes.
+
+#### Edit
+You can edit a redirect by making a PUT request just like you created it.
+
+    # This would remove the email address if one was already listed.
+    curl -X PUT \ 
+    --data from="thomaslevine.com" \ 
+    --data to="www.thomaslevine.com" \
+    --data status_code=303 \
+    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+
+If you would like to edit just one field, you can also use a POST instead.
+
+    # This would not remove the email address if one was already listed.
+    curl -X POST \ 
+    --data from="thomaslevine.com" \ 
+    --data to="www.thomaslevine.com" \
+    --data status_code=303 \
+    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+
+    # This is valid.
+    curl -X POST \ 
+    --data status_code=303 \
+    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
+
+    # This is not valid.
+    curl -X PUT \ 
+    --data status_code=303 \
+    http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
 
 #### Read
 Run something like this to read the redirect configuration of the redirect.
