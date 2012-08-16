@@ -69,7 +69,7 @@ class TestFilesystem:
 
     def test_current_froms1(self):
         self.load('several-redirects')
-        observed = app._current_froms()
+        observed = app._current_froms(self.root)
         expected = {
             'lorena.co.nz',
             'dumptruck.io',
@@ -80,11 +80,24 @@ class TestFilesystem:
 
     def test_current_froms2(self):
         self.load('no-redirects')
-        observed = app._current_froms()
+        observed = app._current_froms(self.root)
         expected = set()
         n.assert_set_equal(observed, expected)
 
-
     # os.path.getctime('../unittests.py')
+
+    def test_parse_nginx_conf(self):
+        self.load('basic')
+        filename = os.path.join(self.root, 'etc', 'nginx', 'conf.d', '1-www.thomaslevine.org-89ouoneu')
+        conf = open(filename).read()
+
+        observed = app._parse_nginx_redirect(conf)
+        expected = {
+            'from': 'www.thomaslevine.org',
+            'status_code': 303,
+            'to': 'http://www.thomaslevine.com',
+            'email': 'occurrence@example.com',
+        }
+        n.assert_dict_equal(observed, expected)
 
 nose.main()
