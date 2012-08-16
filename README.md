@@ -84,31 +84,64 @@ Now that you've chosen an identifier, this is the URL that should concern you
 
     http://redirect.thomaslevine.com/v1/redirect/<identifier>
 
-You can **create**, **edit** and **delete** the redirect by making HTTP
-requests to this URL. Examples follow.
+You can **create**, **edit**, **read** and **delete** the redirect by making
+HTTP requests to this URL. Examples follow.
 
-**Create** a redirect from "thomaslevine.com" to "www.thomaslevine.com"
+#### Create or edit
+Create or edit a redirect from "thomaslevine.com" to "www.thomaslevine.com"
+like so.
 
     curl \ 
     --data from=<from address, like "thomaslevine.com"> \ 
     --data to=<to address, like "www.thomaslevine.com"> \
     http://redirect.thomaslevine.com/v1/redirect/sho+ue8ohn,.n237fun
 
-You may also specify an HTTP status code for the redirect; the default is 303,
-which functions as a temporary redirect. You may also specify 301, which is a
-permanent redirect.
+You may also specify an HTTP status code and email address for the redirect.
 
     curl \ 
     --data from=<from address, like "thomaslevine.com"> \ 
     --data to=<to address, like "www.thomaslevine.com"> \
-    --data status_code=301
+    --data status_code=301 \
+    --data email=occurrence@example.com \
     http://redirect.thomaslevine.com/v1/redirect/sho+ue8ohn,.n237fun
 
-The default status code is 303. If 303 is specified, the redirect server will
-be called every time a browser tries to go to your website. If you specify 301,
-the redirect will be cached within the browser, so the server will not be
-called. It would be reasonable to use 303 for testing and 301 once it seems to
-work. Tell me if you want options for other status codes.
+Regardless of whether you provide an **email address**, I might contact you to
+figure out how I can make this better. If you provide an email address, this
+will be easier. Also, I'll be more able to inform you of outages and whatnot.
+
+The default is **status code** is 303, which functions as a temporary redirect.
+If 303 is specified, the redirect server will be called every time a browser
+tries to go to your website. You may also specify 301, which is a permanent
+redirect. In this cose, the redirect will be cached within the browser, so
+the server will only be called once on each computer; this will make your site
+ever-so-slightly faster, reduce my load ever-so-slightly, and make your site
+ever-so-slightly more robust in case of outages of my server. It would be
+reasonable to use 303 for testing and 301 once it seems to work. And tell me
+if you want options for other status codes.
+
+#### Read
+Run something like this to read the redirect configuration of the redirect.
+
+    curl http://redirect.thomaslevine.com/v1/redirect/sho+ue8ohn,.n237fun
+
+You'll get something like this.
+
+    { "from": "thomaslevine.com",
+      "to": "www.thomaslevine.com",
+      "email": "occurrence@example.com",
+      "created": "2012-08-03 03:56",
+      "status_code": 303
+    }
+
+If you request a url that does not correspond to a redirect, you'll get
+something like this
+
+    { "error": "That redirect doesn't exist. But feel free to create it."
+    }
+
+**Delete** the redirect configuration like so.
+
+    curl -X DELETE http://redirect.thomaslevine.com/v1/redirect/sho+ue8ohn,.n237fun
 
 ## Technical details
 
