@@ -26,7 +26,7 @@ def api_url(size=32, chars=string.letters + string.digits):
     http://stackoverflow.com/questions/2257441/python-random-string-generation-with-upper-case-letters-and-digits
     '''
     randomthing=''.join(random.choice(chars) for x in range(size))
-    return API_DOMAIN + '/v1/redirects/' + randomthing
+    return API_DOMAIN + '/v1/' + randomthing
 
 class TestAPI:
     simple_params = {
