@@ -259,6 +259,10 @@ class TestAuthorization:
         r = requests.put(self.url, params)
         _check_sameness_error(r)
 
+def test_splash_page():
+    "There should be a splash page at /"
+    html = requests.get(API_DOMAIN + '/v1/').text
+    assert_in('https://github.com/tlevine/redirect.thomaslevine.com', html)
 
 if __name__ == '__main__':
     nose.main()
