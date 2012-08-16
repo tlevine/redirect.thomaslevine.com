@@ -68,6 +68,11 @@ class Base:
         requests.delete(self.url)
 
 class TestAPI(Base):
+    def test_content_type(self):
+        "The content type should be JSON."
+        r = requests.get(self.url)
+        n.assert_equal(r.headers['content-type'], 'application/json; charset=utf-8')
+
     def test_basic_put(self):
         "A basic put should work."
         r1 = requests.put(self.url, self.simple_params)
@@ -128,7 +133,7 @@ class TestAPI(Base):
 
         requests.put(self.url, params1)
         data1 = json.loads(requests.get(self.url).text)
-        sleep(5)
+        sleep(1)
         requests.put(self.url, params2)
         data2 = json.loads(requests.get(self.url).text)
 
@@ -149,7 +154,7 @@ class TestAPI(Base):
 
         requests.put(self.url, params1)
         data1 = json.loads(requests.get(self.url).text)
-        sleep(5)
+        sleep(1)
         requests.post(self.url, params2)
         data2 = json.loads(requests.get(self.url).text)
 
@@ -160,7 +165,7 @@ class TestAPI(Base):
     def test_delete(self):
         'I should be able to create a redirect and then delete it.'
         requests.put(self.url, self.simple_params)
-        r = requests.delete(self.url, self.simple_params)
+        r = requests.delete(self.url)
         n.assert_equal(r.status_code, 204)
         n.assert_equal(r.text, '')
 
@@ -173,7 +178,7 @@ class TestAPI(Base):
 
     def test_post_nonexistant(self):
         'I should receive an error if the redirect doesn\'t exist.'
-        r = request.post(self.url, self.simple_params)
+        r = requests.post(self.url, self.simple_params)
         n.assert_equal(r.status_code, 404)
 
         observed = json.loads(r.text)
@@ -182,7 +187,7 @@ class TestAPI(Base):
 
     def test_get_nonexistant(self):
         'I should receive an error if the redirect doesn\'t exist.'
-        r = request.get(self.url)
+        r = requests.get(self.url)
         n.assert_equal(r.status_code, 404)
 
         observed = json.loads(r.text)
@@ -213,7 +218,7 @@ class TestAuthorization:
             'status_code': 301,
         }
         requests.put(self.url_old, params)
-        sleep(5)
+        sleep(1)
  
     def teardown(self):
         """This method is run once after _each_ test method is executed"""

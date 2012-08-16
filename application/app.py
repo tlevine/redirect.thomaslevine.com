@@ -4,32 +4,49 @@ from copy import copy
 import json
 import web
 
+from settings import ROOT
+NGINX_SITES = os.path.join(ROOT, 'etc', 'nginx', 'conf.d')
+try:
+    os.makedirs(NGINX_SITES)
+except OSError:
+    pass
+
 urls = (
     '/v1/(.+)/?', 'redirects'
 )
 app = web.application(urls, globals())
 
-class redirects:
-    def _r(self, data):
-        'Shared return stuff.'
-        web.header('Content-Type', 'application/json')
+def api(api_request_func):
+    'This stuff applies to all requests.'
+
+    def wrapper(self, request_id):
+        # JSON
+        web.header('Content-Type', 'application/json; charset=utf-8')
+
+        # Validate the request_id
+        try:
+            _validate_request_id(request_id)
+        except ValueError, e:
+            return {'error': e.message}
+
+        data = api_request_func(self, request_id)
         return json.dumps(data)
 
+    return wrapper
+
+class redirects:
+    @api
     def GET(self, redirect_id):
-        data = {}
-        return self._r(data)
+        return {}
 
     def PUT(self, redirect_id):
-        data = {}
-        return self._r(data)
+        return {}
 
     def POST(self, redirect_id):
-        data = {}
-        return self._r(data)
+        return {}
 
     def DELETE(self, redirect_id):
-        data = {}
-        return self._r(data)
+        return {}
 
 def _validate_request_id(request_id):
     if '/' in request_id:
