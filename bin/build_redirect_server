@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Make sure that git root is set
+env|grep -E '^GIT_ROOT=' > /dev/null ||
+  echo 'Error: GIT_ROOT is not be set. Did you activate?' && exit 1
+
+# Copy files
+scp -rc server/* root@redirect.thomaslevine.com
+
+# Run the build script
+ssh root@redirect.thomaslevine.com 'sh /root/bin/build_redirect_server'

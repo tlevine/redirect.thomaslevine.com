@@ -2,10 +2,16 @@
 git ls-files|grep -E ^activate > /dev/null ||
   echo '. activate must be run from the root of the git repository.' && exit 1
 
-# Add bin to the path
-OLDPATH=$PATH
-PATH=$PATH:`pwd`/bin
+# What's the git root?
+export GIT_ROOT="$(pwd)"
 
+# Add bin to the path
+export OLD_PATH="${PATH}"
+export PATH="${PATH}:$(pwd)/bin"
+
+# Clean up
 deactivate() {
-  PATH=OLDPATH
+  export PATH="${OLD_PATH}"
+  unset OLD_PATH
+  unset GIT_ROOT
 }
