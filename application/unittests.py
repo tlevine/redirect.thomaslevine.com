@@ -54,7 +54,7 @@ def test_remove_http():
     n.assert_equal(o1, e)
     n.assert_equal(o2, e)
 
-class TestFilesystem:
+class TestReadFilesystem:
     'Information should be stored on the filesystem.'
     def teardown(self):
         try:
@@ -69,10 +69,9 @@ class TestFilesystem:
 
     def test_current_froms1(self):
         self.load('several-redirects')
-        observed = app._current_froms(self.root)
+        observed = app._current_froms(self.root, 'h92hsuostuhaou')
         expected = {
             'lorena.co.nz',
-            'dumptruck.io',
             'www.thomaslevine.org',
             'urchin.sh',
         }
@@ -80,7 +79,7 @@ class TestFilesystem:
 
     def test_current_froms2(self):
         self.load('no-redirects')
-        observed = app._current_froms(self.root)
+        observed = app._current_froms(self.root, 'foobar')
         expected = set()
         n.assert_set_equal(observed, expected)
 
@@ -90,8 +89,6 @@ class TestFilesystem:
         self.load('basic')
         filename = os.path.join(self.root, 'etc', 'nginx', 'conf.d', '1-www.thomaslevine.org-89ouoneu')
         conf = open(filename).read()
-
-        print conf
         observed = app._parse_nginx_redirect(conf)
         expected = {
             'from': 'www.thomaslevine.org',
@@ -100,5 +97,64 @@ class TestFilesystem:
             'email': 'occurrence@example.com',
         }
         n.assert_dict_equal(observed, expected)
+
+class TestWriteNginxConfig:
+    "The Nginx config should be written in a few particular ways."
+    def test_add_http(self):
+        '"http://" should be added to "to" if it\'s missing'
+        params = {
+            'from': 'foo',
+            'status_code': 303,
+            'to': 'bar',
+            'email': '',
+        }
+        conf = app.nginx_conf(params)
+        n.assert_in('http://bar$request_uri;', conf)
+
+    def test_remove_http(self):
+        '"http://" should be removed from "from" if it\'s in there'
+        params = {
+            'from': 'http://foo',
+            'status_code': 303,
+            'to': 'bar',
+            'email': '',
+        }
+        conf = app.nginx_conf(params)
+        n.assert_not_in('http://foo', conf)
+        n.assert_in('foo', conf)
+
+    def test_remove_https(self):
+        '"https://" should be removed from "from" if it\'s in there'
+        params = {
+            'from': 'https://foo',
+            'status_code': 303,
+            'to': 'bar',
+            'email': '',
+        }
+        conf = app.nginx_conf(params)
+        n.assert_not_in('https://foo', conf)
+        n.assert_in('foo', conf)
+
+    def test_empty_email(self):
+        'An empty email should still create a line'
+        params = {
+            'from': 'https://foo',
+            'status_code': 303,
+            'to': 'bar',
+            'email': '',
+        }
+        conf = app.nginx_conf(params)
+        n.assert_in('# email', conf)
+
+    def test_full_email(self):
+        'An email addresses should be followed by a semicolon.'
+        params = {
+            'from': 'https://foo',
+            'status_code': 303,
+            'to': 'bar',
+            'email': 'baz@example.com',
+        }
+        conf = app.nginx_conf(params)
+        n.assert_in('baz@example.com;', conf)
 
 nose.main()

@@ -10,8 +10,6 @@ import requests
 import nose
 import nose.tools as n
 
-import app
-
 #if len(sys.argv) == 1:
 #    API_DOMAIN=u'http://redirect.thomaslevine.com'
 #else:

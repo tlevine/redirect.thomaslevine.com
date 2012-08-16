@@ -1,5 +1,35 @@
 import os
 import re
+from copy import copy
+import json
+import web
+
+urls = (
+    '/v1/(.+)/?', 'redirects'
+)
+app = web.application(urls, globals())
+
+class redirects:
+    def _r(self, data):
+        'Shared return stuff.'
+        web.header('Content-Type', 'application/json')
+        return json.dumps(data)
+
+    def GET(self, redirect_id):
+        data = {}
+        return self._r(data)
+
+    def PUT(self, redirect_id):
+        data = {}
+        return self._r(data)
+
+    def POST(self, redirect_id):
+        data = {}
+        return self._r(data)
+
+    def DELETE(self, redirect_id):
+        data = {}
+        return self._r(data)
 
 def _validate_request_id(request_id):
     if '/' in request_id:
@@ -54,14 +84,32 @@ def _parse_nginx_redirect(conf):
         'email': email,
     }
 
-def _current_froms(root):
-    'Currently listed from addresses'
+def _current_froms(root, exclude):
+    'Currently listed from addresses, excluding the one named $exclude'
     confdir = os.path.join(root, 'etc', 'nginx', 'conf.d')
     froms = set()
     for filename in os.listdir(confdir):
         if filename[0] == '0':
            continue
+        elif filename == '1-' + exclude:
+           continue
         f = open(os.path.join(confdir, filename), 'r')
         froms.add(_parse_nginx_redirect(f.read())['from'])
         f.close()
     return froms
+
+def nginx_conf(orig_params):
+    "Write the nginx configuration, adding or removing the protocal."
+    params = copy(orig_params)
+    params['from'] = _remove_http(params['from'])
+    params['to'] = _add_http(params['to'])
+    return '''server {
+  listen      80;
+  server_name %(from)s;
+  return      %(status_code)d %(to)s$request_uri;
+  # email     %(email)s;
+}
+''' % params
+
+if __name__ == "__main__":
+    app.run()
