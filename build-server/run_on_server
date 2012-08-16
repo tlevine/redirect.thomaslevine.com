@@ -1,0 +1,28 @@
+#!/bin/sh
+# Run this script on the server to install dependencies.
+# It expects the business card Debian that Prometeus provides.
+
+# Install nginx
+echo '
+# nginx
+deb http://nginx.org/packages/debian/ squeeze nginx
+deb-src http://nginx.org/packages/debian/ squeeze nginx
+' >> /etc/apt/sources.list
+apt-get update
+gpg --keyserver keyserver.ubuntu.com --recv-key ABF5BD827BD9BF62
+gpg -a --export ABF5BD827BD9BF62 | apt-key add -
+
+apt-get update
+apt-get install nginx fcgiwrap
+update-rc.d nginx defaults
+update-rc.d fcgiwrap defaults
+
+# Clear any default nginx configuration.
+rm -R /etc/nginx/conf.d
+
+# Copy my nginx configuration
+cp -R ./conf.d /etc/nginx
+
+# Restart nginx and fcgiwrap to enable the new configuration.
+service nginx restart
+service fcgiwrap restart
