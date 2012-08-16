@@ -19,30 +19,48 @@ app = web.application(urls, globals())
 def api(api_request_func):
     'This stuff applies to all requests.'
 
-    def wrapper(self, request_id):
+    def wrapper(self, redirect_id):
         # JSON
         web.header('Content-Type', 'application/json; charset=utf-8')
 
-        # Validate the request_id
+        # Validate the redirect_id
         try:
-            _validate_request_id(request_id)
+            _validate_redirect_id(redirect_id)
         except ValueError, e:
-            return {'error': e.message}
+        #   return {'error': e.message}
+            raise BadRequest(e.message)
 
-        data = api_request_func(self, request_id)
-        return json.dumps(data)
+        data = api_request_func(self, redirect_id)
+        if data and type(data) == dict:
+            return json.dumps(data)
+        else:
+            return ''
 
     return wrapper
 
 class redirects:
     @api
     def GET(self, redirect_id):
-        data = _open_nginx_redirect(request_id)
-        return data
+        try:
+            data = _open_nginx_redirect(redirect_id)
+        except OSError:
+            raise NotFound()
+        else:
+            return data
 
     @api
     def PUT(self, redirect_id):
-        return {}
+        params = web.input()
+        if params['from'] in _current_froms(ROOT, redirect_id):
+            raise Forbidden(
+                "There's already a different redirect from %s. If you think"
+                "there shouldn't be, contact Tom." % redirect_id
+            )
+        else:
+            f = open(os.path.join(NGINX_SITES, '1-' + redirect_id), 'w')
+            f.write(nginx_conf(params))
+            f.close()
+            return
 
     @api
     def POST(self, redirect_id):
@@ -52,8 +70,8 @@ class redirects:
     def DELETE(self, redirect_id):
         return {}
 
-def _validate_request_id(request_id):
-    if '/' in request_id:
+def _validate_redirect_id(redirect_id):
+    if '/' in redirect_id:
         raise ValueError('Request identifier contains a slash.')
 
 def _validate_response_code(response_code):
@@ -106,8 +124,8 @@ def _parse_nginx_redirect(conf):
     }
 
 
-def _open_nginx_redirect(request_id):
-    filename = os.path.join(NGINX_SITES, '1-' + request_id)
+def _open_nginx_redirect(redirect_id):
+    filename = os.path.join(NGINX_SITES, '1-' + redirect_id)
     f = open(filename, 'r')
     data = _parse_nginx_conf(f.read())
     f.close()
@@ -128,8 +146,14 @@ def _current_froms(root, exclude):
     return froms
 
 def nginx_conf(orig_params):
-    "Write the nginx configuration, adding or removing the protocal."
+    "Write the nginx configuration, validating and adding or removing the protocal."
     params = copy(orig_params)
+
+    # Validation
+    _validate_response_code(params['status_code'])
+    _validate_domain_name(params['from'])
+    _validate_domain_name(params['to'])
+
     params['from'] = _remove_http(params['from'])
     params['to'] = _add_http(params['to'])
     return '''server {

@@ -16,7 +16,7 @@ class TestValidation:
     @n.raises(ValueError)
     def test_identifier(self):
         "The request identifier should not contain spaces."
-        app._validate_request_id('/srv/index.html')
+        app._validate_redirect_id('/srv/index.html')
 
     @n.raises(ValueError)
     def test_response_code_number(self):
