@@ -1,6 +1,5 @@
 Web forwards
 =========================
-
 Web forwards, or HTTP redirects, should be easy, but I couldn't find any
 service I liked. Problems with existing services:
 
@@ -18,7 +17,6 @@ or a bigger server, I'll need figure out how to make it sustainable, but it
 would still certainly be cheap.
 
 ## What do I mean by "HTTP redirects"?
-
 Here's the most common sort of HTTP redirect: I own thomaslevine.com, I host
 a website at www.thomaslevine.com, and I want thomaslevine.com and
 www.thomaslevine.com to go to the same place, so I make thomaslevine.com
@@ -29,7 +27,6 @@ could include more, like proxying and dynamic DNS. What's really relevant to
 this service is that they are tiny things that need a reliable server but don't need a big server.
 
 ## How to use: Set up DNS
-
 First, you need to add a record to your zone file with your DNS provider. If
 you don't know what that means, it's probably the the site that you use to
 manage all of your web hosting; a lot of hosts package domain registration,
@@ -54,13 +51,11 @@ set it up, but it won't work until the change gets propogated through the
 world's caches. Either way, follow
 
 ## How to use: Set up the redirect
-
 You can set up the redirect with a web page that works like you expect. If
 you want something fancier or more automatic, use the the API. The form calls
 the API, in case you're curious.
 
 ### Via the GUI
-
 Go to [redirect.thomaslevine.com](http://redirect.thomaslevine.com), and fill
 out the form. It contains two fields
 
@@ -144,6 +139,5 @@ something like this
     curl -X DELETE http://redirect.thomaslevine.com/v1/redirects/sho+ue8ohn,.n237fun
 
 ## Technical details
-
 This runs on a tiny server from Prometeus. The API is a CGI script that runs
 with fcgiwrap on nginx and edits nginx sites; each redirect is a site.
