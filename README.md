@@ -39,19 +39,19 @@ you don't know what that means, it's probably the the site that you use to
 manage all of your web hosting; a lot of hosts package domain registration,
 domain name service and web hosting.
 
-Let's say you want to redirect from thomaslevine.com to www.thomaslevine.com.
-In this case, you need to add an A record that points "thomaslevine.com" to
+Let's say you want to redirect from [thomaslevine.com](http://thomaslevine.com) to [www.thomaslevine.com](http://www.thomaslevine.com).
+In this case, you need to add an A record that points "[thomaslevine.com](http://thomaslevine.com)" to
 "37.247.48.207". Depending on your provider, you might have to specify it in
 one of a few days. Typically, the zone file editor assumes that you are
 managing subdomains, so you might need to enter "" (nothing),
-"thomaslevine.com", or "@" in whatever form you're using. If you're editing the
+"[thomaslevine.com](http://thomaslevine.com)", or "@" in whatever form you're using. If you're editing the
 zone file directly, this line should work.
 
     @ 10800 IN A 217.70.184.38
 
 You'll have to wait some time, between a few minutes and a few days, for the
 change to be propogated to the world's DNS servers. Once that happens, you can
-go to the domain that you are redirecting from (thomaslevine.com in this
+go to the domain that you are redirecting from ([thomaslevine.com](http://thomaslevine.com) in this
 example) and set up the redirection. Alternatively, you can go to
 [redirect.thomaslevine.com](http://redirect.thomaslevine.com) before then and
 set it up, but it won't work until the change gets propogated through the
@@ -90,7 +90,7 @@ You can **create**, **edit**, **read** and **delete** the redirect by making
 HTTP requests to this URL. Examples follow.
 
 #### Create or edit
-Create or edit a redirect from "thomaslevine.com" to "www.thomaslevine.com"
+Create or edit a redirect from "[thomaslevine.com](http://thomaslevine.com)" to "[www.thomaslevine.com](http://www.thomaslevine.com)"
 like so.
 
     curl \ 
