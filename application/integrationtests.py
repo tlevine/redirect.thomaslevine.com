@@ -20,6 +20,10 @@ def api_url(size=32, chars=string.letters + string.digits):
     return API_DOMAIN + '/v1/redirects/' + randomthing
 
 class TestAPI:
+    simple_params = {
+        'from': 'example.com',
+        'to': 'www.example.com',
+    }
     def setUp(self):
         """This method is run once before _each_ test method is executed"""
         # Make a temporary redirect
@@ -32,17 +36,13 @@ class TestAPI:
 
     def test_basic_put(self):
         "A basic put should work."
-        params = {
-            'from': 'example.com',
-            'to': 'www.example.com',
-        }
-        r1 = requests.put(self.url, params)
+        r1 = requests.put(self.url, self.simple_params)
         n.assert_equal(r1.status_code, 204)
         n.assert_equal(r1.text, '')
 
         r2 = requests.get(self.url)
         n.assert_equal(r1.status_code, 200)
-        n.assert_dict_contains_subset(params, json.loads(r1.text))
+        n.assert_dict_contains_subset(self.simple_params, json.loads(r1.text))
 
     def test_advanced_put(self):
         "A put with email and status_code should work."
@@ -64,11 +64,7 @@ class TestAPI:
         "If I create a record and then read it, it should have a creation date."
 
         # Create
-        params = {
-            'from': 'example.com',
-            'to': 'www.example.com',
-        }
-        requests.put(self.url, params)
+        requests.put(self.url, self.simple_params)
 
         # Read
         r = requests.get(self.url)
@@ -96,10 +92,10 @@ class TestAPI:
             'status_code': 303,
         }
 
-        requests.put(self.url, params)
+        requests.put(self.url, params1)
         data1 = json.loads(requests.get(self.url).text)
         sleep(5)
-        requests.put(self.url, params)
+        requests.put(self.url, params2)
         data2 = json.loads(requests.get(self.url).text)
 
         n.assert_not_equal(data1, data2)
@@ -117,10 +113,10 @@ class TestAPI:
             'status_code': 303,
         }
 
-        requests.put(self.url, params)
+        requests.put(self.url, params1)
         data1 = json.loads(requests.get(self.url).text)
         sleep(5)
-        requests.post(self.url, params)
+        requests.post(self.url, params2)
         data2 = json.loads(requests.get(self.url).text)
 
         n.assert_not_equal(data1, data2)
@@ -129,8 +125,28 @@ class TestAPI:
 
     def test_delete(self):
         'I should be able to create a redirect and then delete it.'
+        requests.put(self.url, self.simple_params)
+        r = requests.delete(self.url, self.simple_params)
+        n.assert_equal(r.status_code, 204)
+        n.assert_equal(r.text, '')
 
-    def test_nonexistant(self):
+    def test_delete_nonexistant(self):
+        'I should receive an error if the redirect doesn\'t exist.'
+        requests.put(self.url, self.simple_params)
+        r = requests.delete(self.url, self.simple_params)
+        n.assert_equal(r.status_code, 204)
+        n.assert_equal(r.text, '')
+
+    def test_post_nonexistant(self):
+        'I should receive an error if the redirect doesn\'t exist.'
+        r = request.post(self.url, self.simple_params)
+        n.assert_equal(r.status_code, 404)
+
+        observed = json.loads(r.text)
+        expected = { "error": "That redirect doesn't exist. But feel free to create it." }
+        n.assert_dict_equal(observed, expected)
+
+    def test_get_nonexistant(self):
         'I should receive an error if the redirect doesn\'t exist.'
         r = request.get(self.url)
         n.assert_equal(r.status_code, 404)
