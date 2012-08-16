@@ -3,8 +3,8 @@ Web forwards
 Web forwards, or HTTP redirects, should be easy, but I couldn't find any
 service I liked. Problems with existing services:
 
-* The good ones are DNS services that cost like $50 per year. This doesn't
-    need to be so expensive.
+* The good ones are [DNS](http://freedns.afraid.org/) [hosting](http://dyn.com)
+    that costs like $50 per year. Redirects don't need to be so expensive.
 * I use Gandi's web forwards for the domains I have registered on Gandi, but
     not all registrars provide HTTP redirects.
 * Gandi is too complicated. HTTP redirects are stupidly simple to specify;
