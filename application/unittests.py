@@ -73,7 +73,7 @@ class TestFilesystem:
         expected = {
             'lorena.co.nz',
             'dumptruck.io',
-            'thomaslevine.com',
+            'www.thomaslevine.org',
             'urchin.sh',
         }
         n.assert_set_equal(observed, expected)
@@ -91,6 +91,7 @@ class TestFilesystem:
         filename = os.path.join(self.root, 'etc', 'nginx', 'conf.d', '1-www.thomaslevine.org-89ouoneu')
         conf = open(filename).read()
 
+        print conf
         observed = app._parse_nginx_redirect(conf)
         expected = {
             'from': 'www.thomaslevine.org',

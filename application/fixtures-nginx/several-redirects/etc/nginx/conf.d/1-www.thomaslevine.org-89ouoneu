@@ -2,5 +2,5 @@ server {
     listen       80;
     server_name  www.thomaslevine.org;
     return       301 http://www.thomaslevine.com$request_uri;
-    # email ;
+    # email occurrence@example.com;
 }
