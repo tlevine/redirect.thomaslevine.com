@@ -54,7 +54,7 @@ class TestNoId:
     def test_delete(self):
         _no_id(self, requests.delete)
 
-class TestAPI:
+class Base:
     simple_params = {
         'from': 'example.com',
         'to': 'www.example.com',
@@ -67,8 +67,9 @@ class TestAPI:
     def teardown(self):
         """This method is run once after _each_ test method is executed"""
         # Remove the redirect.
-        requests.delete(api_url)
+        requests.delete(self.url)
 
+class TestAPI(Base):
     def test_basic_put(self):
         "A basic put should work."
         r1 = requests.put(self.url, self.simple_params)
@@ -199,6 +200,65 @@ class TestAPI:
         n.assert_in('error', data)
         n.assert_in('"from"', data)
         n.assert_not_in('"to"', data)
+
+class TestAuthorization:
+    'If I try to make a redirect with a from that already exists, I should get an error.'
+    def setUp(self):
+        """This method is run once before _each_ test method is executed"""
+        # Make a temporary redirect
+        self.url_old = api_url()
+        self.url = api_url()
+
+        params = {
+            'from': 'example.com',
+            'to': 'www.example.com',
+            'status_code': 301,
+        }
+        requests.put(self.url_old, params)
+        sleep(5)
  
+    def teardown(self):
+        """This method is run once after _each_ test method is executed"""
+        # Remove the redirect.
+        requests.delete(self.url_old)
+        requests.delete(self.url)
+
+    def _check_sameness_error(self, r):
+        data = json.loads(requests.get(r.url).text)
+
+        n.assert_equal(r.status_code, 401)
+        n.assert_in('error', data)
+        n.assert_equal(data['error'], "There's already a different redirect from example.com. If you think there shouldn't be, contact Tom.")
+ 
+    def test_post(self):
+        "If you post the update"
+
+        # Create my redirect
+        params1 = {
+            'from': 'thomaslevine.com',
+            'to': 'www.thomaslevine.com',
+            'status_code': 303,
+        }
+        requests.put(self.url, params1)
+
+        # Change it.
+        params2 = {
+            'from': 'example.com',
+        }
+        r = requests.post(self.url, params2)
+        _check_sameness_error(r)
+ 
+    def test_put(self):
+        "If you put the update"
+        params = {
+            'from': 'example.com',
+            'to': 'www.thomaslevine.com',
+            'status_code': 303,
+        }
+
+        r = requests.put(self.url, params)
+        _check_sameness_error(r)
+
+
 if __name__ == '__main__':
     nose.main()
