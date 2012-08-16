@@ -5,7 +5,7 @@ from time import sleep
 import json
 
 import requests
-from nose.tools import assert_equal, assert_dict_equal, assert_in, assert_not_in
+import nose.tools as n
 
 import app
 
@@ -30,16 +30,32 @@ class TestAPI:
         # Remove the redirect.
         requests.delete(api_url)
 
-    def test_basic_post(self):
-        "A basic post should work and return what it did."
+    def test_basic_put(self):
+        "A basic put should work."
         params = {
             'from': 'example.com',
             'to': 'www.example.com',
         }
-        r = requests.post(API_URL, params)
-        assert_equal(r.status_code, 201)
+        r1 = requests.put(self.url, params)
+        n.assert_equal(r1.status_code, 204)
+        n.assert_equal(r1.text, '')
 
-        pseudo_observed_data = json.loads(r.text)
+        r2 = requests.get(self.url)
+        n.assert_equal(r1.status_code, 200)
+        n.assert_dict_contains_subset(params, json.loads(r1.text))
+
+    def test_creation_date(self):
+        "If I create a record and then read it, it should have a creation date."
+
+        # Create
+        params = {
+            'from': 'example.com',
+            'to': 'www.example.com',
+        }
+        requests.put(self.url, params)
+
+        # Read
+        r = requests.get(self.url)
         pseudo_observed_data['created'] = datetime.datetime.strptime(
             pseudo_observed_data['created'][:10],
             '%Y-%m-%d'
@@ -50,55 +66,73 @@ class TestAPI:
             "email": "occurrence@example.com",
             "created": datetime.date(2012, 08, 03),
         }
-        assert_dict_equal(pseudo_observed_data, pseudo_expected_data)
+        n.assert_dict_equal(pseudo_observed_data, pseudo_expected_data)
 
-    def test_post_then_get(self):
-        'A basic post should return something, and then getting again a few seconds later should return the same something.'
- 
-        params = {
+    def test_put_put(self):
+        'If I make different puts, the response should change.'
+        params1 = {
             'from': 'example.com',
             'to': 'www.example.com',
+            'status_code': 301,
         }
-
-        # Create the thingy.
-        post = requests.post(API_URL, params)
-        post_data = json.loads(post.text)
-
-        sleep(5)
-
-        # Query the thingy.
-        get = requests.post(API_URL, params)
-        get_data = json.loads(post.text)
-
-        assert_dict_equal(post_data, get_data)
-
-    def test_post_twice(self):
-        'If I post twice, the first should be 201 and the second should be 200'
-        params = {
+        params2 = {
             'from': 'example.com',
             'to': 'www.example.com',
+            'status_code': 303,
         }
 
-        creation = requests.post(API_URL, params)
+        requests.put(self.url, params)
+        data1 = json.loads(requests.get(self.url).text)
         sleep(5)
-        modification = requests.post(API_URL, params)
-        assert_equal(creation.status_code, 201)
-        assert_equal(modification.status_code, 200)
+        requests.put(self.url, params)
+        data2 = json.loads(requests.get(self.url).text)
+
+        n.assert_not_equal(data1, data2)
+        data1['status_code'] = 303
+        n.assert_equal(data1, data2)
 
     def test_put_post(self):
+        'If I create and then update, the response should change.'
+        params1 = {
+            'from': 'example.com',
+            'to': 'www.example.com',
+            'status_code': 301,
+        }
+        params2 = {
+            'status_code': 303,
+        }
+
+        requests.put(self.url, params)
+        data1 = json.loads(requests.get(self.url).text)
+        sleep(5)
+        requests.post(self.url, params)
+        data2 = json.loads(requests.get(self.url).text)
+
+        n.assert_not_equal(data1, data2)
+        data1['status_code'] = 303
+        n.assert_equal(data1, data2)
 
     def test_delete(self):
         'I should be able to create a redirect and then delete it.'
 
-    def test_post_missing_fields(self):
-        "An invalid post should say what fields are missing."
-        r = requests.post(API_URL, {'to': 'example.com'})
-        assert_equal(r.status_code, 400)
+    def test_nonexistant(self):
+        'I should receive an error if the redirect doesn\'t exist.'
+        r = request.get(self.url)
+        n.assert_equal(r.status_code, 404)
+
+        observed = json.loads(r.text)
+        expected = { "error": "That redirect doesn't exist. But feel free to create it." }
+        n.assert_dict_equal(observed, expected)
+
+    def test_put_missing_fields(self):
+        "An invalid put should say what fields are missing."
+        r = requests.put(self.url, {'to': 'example.com'})
+        n.assert_equal(r.status_code, 400)
 
         data = json.loads(r.text)
-        assert_in('error', data)
-        assert_in('"from"', data)
-        assert_not_in('"to"', data)
+        n.assert_in('error', data)
+        n.assert_in('"from"', data)
+        n.assert_not_in('"to"', data)
  
 
 nose.main()
