@@ -18,10 +18,17 @@ update-rc.d nginx defaults
 update-rc.d fcgiwrap defaults
 
 # Clear any default nginx configuration.
+cgi=$(mktemp)
+mv /etc/nginx/conf.d/0-cgi $cgi
 rm -R /etc/nginx/conf.d
+mkdir /etc/nginx/conf.d
+mv $cgi /etc/nginx/conf.d
 
 # Copy my nginx configuration
 cp -R ./conf.d /etc/nginx
+
+# Chown web stuff to www-data
+chown -r www-data: /srv
 
 # Restart nginx and fcgiwrap to enable the new configuration.
 service nginx restart
