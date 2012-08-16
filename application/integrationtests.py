@@ -44,6 +44,22 @@ class TestAPI:
         n.assert_equal(r1.status_code, 200)
         n.assert_dict_contains_subset(params, json.loads(r1.text))
 
+    def test_advanced_put(self):
+        "A put with email and status_code should work."
+        params = {
+            'from': 'example.com',
+            'to': 'www.example.com',
+            'status_code': 303,
+            'email': 'occurrence@example.com',
+        }
+        r1 = requests.put(self.url, params)
+        n.assert_equal(r1.status_code, 204)
+        n.assert_equal(r1.text, '')
+
+        r2 = requests.get(self.url)
+        n.assert_equal(r1.status_code, 200)
+        n.assert_dict_contains_subset(params, json.loads(r1.text))
+
     def test_creation_date(self):
         "If I create a record and then read it, it should have a creation date."
 
@@ -63,7 +79,6 @@ class TestAPI:
         pseudo_expected_data = {
             "from": "thomaslevine.com",
             "to": "www.thomaslevine.com",
-            "email": "occurrence@example.com",
             "created": datetime.date(2012, 08, 03),
         }
         n.assert_dict_equal(pseudo_observed_data, pseudo_expected_data)
