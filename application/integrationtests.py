@@ -1,15 +1,24 @@
 #!/usr/bin/env python2
+import sys
 import random
 import datetime
+import string
 from time import sleep
 import json
 
 import requests
+import nose
 import nose.tools as n
 
 import app
 
-API_DOMAIN=u'http://redirect.thomaslevine.com'
+#if len(sys.argv) == 1:
+#    API_DOMAIN=u'http://redirect.thomaslevine.com'
+#else:
+#    API_DOMAIN=sys.argv[1]
+
+API_DOMAIN='http://localhost:9001'
+
 def api_url(size=32, chars=string.letters + string.digits):
     '''
     Return a redirect endpoint with a random identifier.
@@ -75,7 +84,7 @@ class TestAPI:
         pseudo_expected_data = {
             "from": "thomaslevine.com",
             "to": "www.thomaslevine.com",
-            "created": datetime.date(2012, 08, 03),
+            "created": datetime.date(2012, 8, 3),
         }
         n.assert_dict_equal(pseudo_observed_data, pseudo_expected_data)
 
@@ -165,5 +174,5 @@ class TestAPI:
         n.assert_in('"from"', data)
         n.assert_not_in('"to"', data)
  
-
-nose.main()
+if __name__ == '__main__':
+    nose.main()
