@@ -1,11 +1,11 @@
 #!/usr/bin/env python2
 import random
-import requests
+import datetime
+from time import sleep
+import json
 
-from nose.tools import assert_equal
-from nose.tools import assert_not_equal
-from nose.tools import assert_raises
-from nose.tools import raises
+import requests
+from nose.tools import assert_equal, assert_dict_equal, assert_in, assert_not_in
 
 import app
 
@@ -30,29 +30,58 @@ class TestAPI:
         # Remove the redirect.
         requests.delete(api_url)
 
+    def test_basic_post(self):
+        "A basic post should work and return what it did."
+        params = {
+            'from': 'example.com',
+            'to': 'www.example.com',
+        }
+        r = requests.post(API_URL, params)
+        assert_equal(r.status_code, 201)
+
+        pseudo_observed_data = json.loads(r.text)
+        pseudo_observed_data['created'] = datetime.datetime.strptime(
+            pseudo_observed_data['created'][:10],
+            '%Y-%m-%d'
+        ).date()
+        pseudo_expected_data = {
+            "from": "thomaslevine.com",
+            "to": "www.thomaslevine.com",
+            "email": "occurrence@example.com",
+            "created": datetime.date(2012, 08, 03),
+        }
+        assert_dict_equal(pseudo_observed_data, pseudo_expected_data)
+
+    def test_post_then_get(self):
+        'A basic post should return something, and then getting again a few seconds later should return the same something.'
+ 
+        params = {
+            'from': 'example.com',
+            'to': 'www.example.com',
+        }
+
+        # Create the thingy.
+        post = requests.post(API_URL, params)
+        post_data = json.loads(post.text)
+
+        sleep(5)
+
+        # Query the thingy.
+        get = requests.post(API_URL, params)
+        get_data = json.loads(post.text)
+
+        assert_dict_equal(post_data, get_data)
+
+
     def test_post_missing_fields(self):
         "An invalid post should say what fields are missing."
         r = requests.post(API_URL, {'to': 'example.com'})
         assert_equal(r.status_code, 400)
 
-        data = json.loads(r.content)
+        data = json.loads(r.text)
         assert_in('error', data)
         assert_in('"from"', data)
         assert_not_in('"to"', data)
  
-    def test_return_true(self):
-        a = A()
-        assert_equal(a.return_true(), True)
-        assert_not_equal(a.return_true(), False)
- 
-    def test_raise_exc(self):
-        a = A()
- 
-        assert_raises(KeyError, a.raise_exc, "A value")
- 
-    @raises(KeyError)
-    def test_raise_exc_with_decorator(self):
-        a = A()
-        a.raise_exc("A message")
 
 nose.main()
