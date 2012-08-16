@@ -22,9 +22,9 @@ a website at www.thomaslevine.com, and I want thomaslevine.com and
 www.thomaslevine.com to go to the same place, so I make thomaslevine.com
 redirect to www.thomaslevine.com.
 
-More technically, this includes HTTP responses with codes of 301, ..., but it
-could include more, like proxying and dynamic DNS. What's really relevant to
-this service is that they are tiny things that need a reliable server but don't need a big server.
+More technically, this currently includes HTTP responses with codes of 301
+and 303, but it could include more. The relevant part is that these are tiny
+things that need a reliable server but don't need a big server.
 
 ## How to use: Set up DNS
 First, you need to add a record to your zone file with your DNS provider. If
