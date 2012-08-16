@@ -1,0 +1,5 @@
+server {
+    listen       80;
+    server_name  lorena.co.nz;
+    return       301 http://www.lorena.co.nz$request_uri;
+}

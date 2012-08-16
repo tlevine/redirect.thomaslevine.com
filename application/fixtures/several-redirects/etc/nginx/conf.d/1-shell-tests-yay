@@ -1,0 +1,5 @@
+server {
+    listen       80;
+    server_name  urchin.sh;
+    return       301 http://www.urchin.sh$request_uri;
+}
