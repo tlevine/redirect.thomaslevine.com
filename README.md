@@ -162,7 +162,6 @@ You'll get something like this.
     { "from": "thomaslevine.com",
       "to": "www.thomaslevine.com",
       "email": "occurrence@example.com",
-      "created": "2012-08-03 03:56",
       "status_code": 303
     }
 
