@@ -180,7 +180,7 @@ something like this
 This runs on a tiny server from Prometeus. The API is a CGI script that runs
 with fcgiwrap on nginx and edits nginx sites; each redirect is a site.
 
-### Installing
+### Installing the server
 If we're lucky, the entire install process can be run without interactively
 logging in to the redirect server; all of the commands below are supposed to be
 run from any old computer, rather than the redirect server.
@@ -203,3 +203,11 @@ All done. Test it out.
     --data to="www.thomaslevine.com" \
     --data status_code=303 \
     http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
+
+### Running the backups
+Run `./bin/backup_redirect_server` to take backups. Set up a cron job to do
+this daily or so.
+
+### Integration tests
+Run `./bin/integration_tests` to run integration tests on the live site. Set up
+a cron job to do this daily or so.
