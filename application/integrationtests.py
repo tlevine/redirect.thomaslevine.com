@@ -134,7 +134,7 @@ class TestAPI:
         'I should receive an error if the redirect doesn\'t exist.'
         requests.put(self.url, self.simple_params)
         r = requests.delete(self.url, self.simple_params)
-        n.assert_equal(r.status_code, 204)
+        n.assert_equal(r.status_code, 404)
         n.assert_equal(r.text, '')
 
     def test_post_nonexistant(self):
@@ -143,7 +143,7 @@ class TestAPI:
         n.assert_equal(r.status_code, 404)
 
         observed = json.loads(r.text)
-        expected = { "error": "That redirect doesn't exist. But feel free to create it." }
+        expected = { "error": "That redirect doesn't exist. Use PUT to create it." }
         n.assert_dict_equal(observed, expected)
 
     def test_get_nonexistant(self):
@@ -152,7 +152,7 @@ class TestAPI:
         n.assert_equal(r.status_code, 404)
 
         observed = json.loads(r.text)
-        expected = { "error": "That redirect doesn't exist. But feel free to create it." }
+        expected = { "error": "That redirect doesn't exist. Use PUT to create it." }
         n.assert_dict_equal(observed, expected)
 
     def test_put_missing_fields(self):
