@@ -28,6 +28,32 @@ def api_url(size=32, chars=string.letters + string.digits):
     randomthing=''.join(random.choice(chars) for x in range(size))
     return API_DOMAIN + '/v1/' + randomthing
 
+class TestNoId:
+    "Requests to /v1 should report that a redirect name is needed."
+    url = API_DOMAIN + '/v1/'
+
+    def _no_id(self, method):
+        r = method(self.url)
+        observed_data = json.loads(r.text)
+        expected_data = {
+            'error': 'You must specify a redirect name after /v1/'
+        }
+
+        n.assert_equal(r.status_code, 400)
+        n.assert_equal(observed_data, expected_data)
+
+    def test_put(self):
+        _no_id(self, requests.put)
+
+    def test_post(self):
+        _no_id(self, requests.post)
+
+    def test_get(self):
+        _no_id(self, requests.get)
+
+    def test_delete(self):
+        _no_id(self, requests.delete)
+
 class TestAPI:
     simple_params = {
         'from': 'example.com',

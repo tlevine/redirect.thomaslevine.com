@@ -179,3 +179,27 @@ something like this
 ## Technical details
 This runs on a tiny server from Prometeus. The API is a CGI script that runs
 with fcgiwrap on nginx and edits nginx sites; each redirect is a site.
+
+### Installing
+If we're lucky, the entire install process can be run without interactively
+logging in to the redirect server; all of the commands below are supposed to be
+run from any old computer, rather than the redirect server.
+
+First, make an A record pointing to the server and install Debian on the server.
+Then configure the ssh keys. 
+
+    ssh-copy-id root@redirect.thomaslevine.com
+
+Now build the dependencies and copy the files. There's a script for this.
+
+    . activate
+    build_redirect_server redirect.thomaslevine.com
+
+All done. Test it out.
+
+    curl http://redirect.thomaslevine.com
+    curl -X PUT \ 
+    --data from="thomaslevine.com" \ 
+    --data to="www.thomaslevine.com" \
+    --data status_code=303 \
+    http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun

@@ -1,0 +1,11 @@
+# Make sure this is being run from the root of the git repository.
+git ls-files|grep -E ^activate > /dev/null ||
+  echo '. activate must be run from the root of the git repository.' && exit 1
+
+# Add bin to the path
+OLDPATH=$PATH
+PATH=$PATH:`pwd`/bin
+
+deactivate() {
+  PATH=OLDPATH
+}
