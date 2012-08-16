@@ -37,14 +37,18 @@ def api(api_request_func):
 class redirects:
     @api
     def GET(self, redirect_id):
-        return {}
+        data = _open_nginx_redirect(request_id)
+        return data
 
+    @api
     def PUT(self, redirect_id):
         return {}
 
+    @api
     def POST(self, redirect_id):
         return {}
 
+    @api
     def DELETE(self, redirect_id):
         return {}
 
@@ -100,6 +104,14 @@ def _parse_nginx_redirect(conf):
         'status_code': status_code,
         'email': email,
     }
+
+
+def _open_nginx_redirect(request_id):
+    filename = os.path.join(NGINX_SITES, '1-' + request_id)
+    f = open(filename, 'r')
+    data = _parse_nginx_conf(f.read())
+    f.close()
+    return data
 
 def _current_froms(root, exclude):
     'Currently listed from addresses, excluding the one named $exclude'
