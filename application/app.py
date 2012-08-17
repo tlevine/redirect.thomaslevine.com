@@ -70,11 +70,6 @@ def api(api_request_func):
 
     return wrapper
 
-@b.get('/')
-def splash():
-    response.set_header('Location', 'https://github.com/tlevine/redirect.thomaslevine.com')
-    response.status = 303
-
 @b.get('/v1/')
 @b.post('/v1/')
 @b.put('/v1/')
@@ -204,6 +199,10 @@ def _parse_nginx_redirect(conf):
 
     # Regular expression matches
     lines = conf.split('\n')
+    if len(lines) <= 2:
+        # Empty file
+        return {}
+
     l2 = re.match(r'^\s+server_name\s+([^;]+);$', lines[2])
     l3 = re.match(r'^\s+return\s+(301|303)\s+([^$]+)\$request_uri;$', lines[3])
     l4 = re.match(r'^\s+# email\s+([^;]*);$', lines[4])

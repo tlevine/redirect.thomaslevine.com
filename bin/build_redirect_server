@@ -16,7 +16,10 @@ env|grep -E '^GIT_ROOT=' > /dev/null ||
 
 # Copy files
 scp -Cpr "${GIT_ROOT}"/server/* root@${host}:/
+sleep 1s
+
 scp -pC "${GIT_ROOT}"/application/app.py root@${host}:/srv/v1/app.py
+sleep 1s
 
 # Run the build script
 ssh root@${host} "sh /root/bin/${action}_redirect_server"
