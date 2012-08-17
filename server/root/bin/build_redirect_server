@@ -1,42 +1,28 @@
 #!/bin/sh
 # Run this script on the server to install dependencies.
-# It expects the business card Debian that Prometeus provides.
+# It expects Arch Linux from ChicagoVPS.
 
 # Install nginx
-echo '
-# nginx
-deb http://nginx.org/packages/debian/ squeeze nginx
-deb-src http://nginx.org/packages/debian/ squeeze nginx
-' >> /etc/apt/sources.list
-apt-get update
-gpg --keyserver keyserver.ubuntu.com --recv-key ABF5BD827BD9BF62
-gpg -a --export ABF5BD827BD9BF62 | apt-key add -
-
-# Nginx
-apt-get update
-update-rc.d nginx defaults
+# pacman -Syu nginx
 
 # Clear any default nginx configuration.
 cgi=$(mktemp)
-mv /etc/nginx/conf.d/0-cgi $cgi
+mv /etc/nginx/conf.d/0-redirect.thomaslevine.com $cgi
 rm -R /etc/nginx/conf.d
 mkdir /etc/nginx/conf.d
-mv $cgi /etc/nginx/conf.d
+mv $cgi /etc/nginx/conf.d/0-redirect.thomaslevine.com
 
-# Copy my nginx configuration
-cp -R ~/etc/conf.d /etc/nginx
+# Chown nginx sites directory to http
+chown -R http: /etc/nginx/conf.d
 
-# Chown nginx sites directory to www-data
-chown -R www-data: /etc/nginx/conf.d
-
-# Chown slash page to www-data
-chown -R www-data: /srv/splash
+# Chown slash page to http
+chown -R http: /srv/splash
 
 
 
 # uWSGI
-apt-get install build-essential psmisc python-dev libxml2 libxml2-dev python-setuptools
-pip install uwsgi
+pacman -S python2-pip gcc
+pip2 install uwsgi
 
 # uWSGI web stuff
 adduser uwsgi
@@ -50,4 +36,7 @@ su uwsgi -c 'echo "@reboot /home/uwsgi/bin/start_pseudo_daemon"'
 su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
 
 # Restart nginx to enable the new configuration.
-service nginx restart
+rc.d restart nginx
+
+# Manual stuff for now
+grep nginx /etc/rc.conf || echo Nota bene: You need to add nginx to your /etc/rc.conf
