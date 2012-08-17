@@ -46,10 +46,10 @@
 				<input type="text" id="from" name="from" placeholder="example.com"></input>
 				<label for="to">To</label>
 				<input type="text" id="to"  name="to" placeholder="www.example.com"></input>
+				<label for="email">Email address (optional)</label>
+				<input type="text" id="email" name="email" placeholder="tom@example.com"></input>
 				<span id="show-advanced">Show advanced options.</span>
 				<div id="advanced" style="display: none;">
-					<label for="email">Email address (optional)</label>
-					<input type="text" id="email" name="email" placeholder="tom@example.com"></input>
 					<label for="status_code">Status code for the redirect</label>
 					<select name="status_code">
 						<option value="301">301 Moved permanently</option>
@@ -92,6 +92,8 @@
 			    data: f.serialize(),
 			    success: function(res){
 			      $('#create').hide();
+			      $('#make-redirect').html('<p>Save this link in case you want to edit the redirect in the future.</p><textarea id="save-this"></textarea');
+			      $('#save-this').text(action);
 			      alert('Done!');
 			    },
 			    error: function(){

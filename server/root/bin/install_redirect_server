@@ -42,6 +42,10 @@ su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
 # Restart nginx to enable the new configuration.
 service nginx restart
 
+# Configure cron to reload the nginx configuration every minute.
+echo '*/1 * * * * service nginx reload > /dev/null' | crontab -
+update-rc.d cron defaults
+
 echo "All should be installed and running. Let's test the home page"
 apt-get install curl
 curl localhost:9002

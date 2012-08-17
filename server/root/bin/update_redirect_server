@@ -7,3 +7,5 @@ chown -R www-data: /srv/splash
 
 su uwsgi -c 'tmux kill-session'
 su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
+
+service nginx restart

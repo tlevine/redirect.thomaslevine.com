@@ -2,8 +2,6 @@ server {
   listen 80;
   server_name redirect.thomaslevine.com;
 
-  # In case people try to access the form from a to-be-redirected url
-  add_header Access-Control-Allow-Origin *;
 
   # Splash page
   index index.html index.htm;
@@ -12,6 +10,8 @@ server {
     alias /srv/splash/;
   }
 
+  # In case people try to access the form from a to-be-redirected url
+  add_header Access-Control-Allow-Origin *;
   # Version 1 of the API
   location /v1 {
     proxy_pass        http://localhost:9002;
