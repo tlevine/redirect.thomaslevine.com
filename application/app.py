@@ -204,8 +204,11 @@ def _parse_nginx_redirect(conf):
 
 
 def _open_nginx_redirect(redirect_id):
+    "Open the redirect file and convert the data to a dictionary."
     f = open(redirect_filename(redirect_id), 'r')
     data = _parse_nginx_redirect(f.read())
+    data['to'] = _add_http(data['to'])
+    data['from'] = _add_http(data['from'])
     f.close()
     return data
 
