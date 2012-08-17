@@ -5,7 +5,8 @@ env|grep -E '^GIT_ROOT=' > /dev/null ||
   echo 'Error: GIT_ROOT is not be set. Did you activate?' && exit 1
 
 # Copy files
-scp -rc server/* root@redirect.thomaslevine.com
+scp -rc server/* root@redirect.thomaslevine.com:/
+scp -c application/app.py root@redirect.thomaslevine.com:/srv/v1/app.py
 
 # Run the build script
 ssh root@redirect.thomaslevine.com 'sh /root/bin/build_redirect_server'

@@ -12,10 +12,9 @@ apt-get update
 gpg --keyserver keyserver.ubuntu.com --recv-key ABF5BD827BD9BF62
 gpg -a --export ABF5BD827BD9BF62 | apt-key add -
 
+# Nginx
 apt-get update
-apt-get install nginx fcgiwrap
 update-rc.d nginx defaults
-update-rc.d fcgiwrap defaults
 
 # Clear any default nginx configuration.
 cgi=$(mktemp)
@@ -25,14 +24,24 @@ mkdir /etc/nginx/conf.d
 mv $cgi /etc/nginx/conf.d
 
 # Copy my nginx configuration
-cp -R ./conf.d /etc/nginx
+cp -R ~/etc/conf.d /etc/nginx
 
 # Chown nginx sites directory to www-data
 chown -r www-data: /etc/nginx/conf.d
 
-# Chown web stuff to www-data
-chown -r www-data: /srv
+# Chown slash page to www-data
+chown -r www-data: /srv/splash
 
-# Restart nginx and fcgiwrap to enable the new configuration.
+
+
+# uWSGI
+apt-get install build-essential psmisc python-dev libxml2 libxml2-dev python-setuptools
+pip install uwsgi
+
+# uWSGI web stuff
+adduser uwsgi
+chown -r uwsgi: /srv/v1
+chmod +x /srv/v1/app.py
+
+# Restart nginx to enable the new configuration.
 service nginx restart
-service fcgiwrap restart
