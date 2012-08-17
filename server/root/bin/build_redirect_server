@@ -2,8 +2,11 @@
 # Run this script on the server to install dependencies.
 # It expects Arch Linux from ChicagoVPS.
 
+# apt-get update
+
 # Install nginx
-# pacman -Syu nginx
+apt-get install nginx
+update-rc.d nginx defaults
 
 # Clear any default nginx configuration.
 cgi=$(mktemp)
@@ -12,31 +15,29 @@ rm -R /etc/nginx/conf.d
 mkdir /etc/nginx/conf.d
 mv $cgi /etc/nginx/conf.d/0-redirect.thomaslevine.com
 
-# Chown nginx sites directory to http
-chown -R http: /etc/nginx/conf.d
+# Chown nginx sites directory to www-data
+chown -R www-data: /etc/nginx/conf.d
 
-# Chown slash page to http
-chown -R http: /srv/splash
+# Chown slash page to www-data
+chown -R www-data: /srv/splash
 
 
 
 # uWSGI
-pacman -S python2-pip gcc
-pip2 install uwsgi
+apt-get install python-pip
+pip install uwsgi bottle
 
 # uWSGI web stuff
-adduser uwsgi
+useradd uwsgi
 chown uwsgi: /home/uwsgi
 chown -R uwsgi: /srv/v1
 chmod +x /srv/v1/app.py
 
 # Daemon hack
+apt-get install tmux
 chmod +x /home/uwsgi/bin/start_pseudo_daemon
 su uwsgi -c 'echo "@reboot /home/uwsgi/bin/start_pseudo_daemon"'
 su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
 
 # Restart nginx to enable the new configuration.
-rc.d restart nginx
-
-# Manual stuff for now
-grep nginx /etc/rc.conf || echo Nota bene: You need to add nginx to your /etc/rc.conf
+service nginx restart
