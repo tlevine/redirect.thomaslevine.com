@@ -55,6 +55,7 @@ class Base:
         """This method is run once before _each_ test method is executed"""
         # Make a temporary redirect
         self.url = api_url()
+        requests.delete(self.url)
 
         # Temporary from value
         self.uuid = unicode(uuid.uuid1()) 
@@ -78,7 +79,7 @@ class TestAPI(Base):
     def test_content_type(self):
         "The content type should be JSON."
         r = requests.get(self.url)
-        n.assert_equal(r.headers['Content-Type'], 'application/json; charset=utf-8')
+        n.assert_equal(r.headers['Content-Type'].decode('utf-8'), u'application/json')
 
     def test_basic_put(self):
         "A basic put should work."
@@ -171,10 +172,11 @@ class TestAPI(Base):
 
     def test_delete_nonexistant(self):
         'I should receive an error if the redirect doesn\'t exist.'
-        requests.put(self.url, self.simple_params)
         r = requests.delete(self.url)
         n.assert_equal(r.status_code, 404)
-        n.assert_equal(r.content, '')
+        observed = json.loads(r.text)
+        expected = { "error": "That redirect doesn't exist. Use PUT to create it." }
+        n.assert_dict_equal(observed, expected)
 
     def test_post_nonexistant(self):
         'I should receive an error if the redirect doesn\'t exist.'
