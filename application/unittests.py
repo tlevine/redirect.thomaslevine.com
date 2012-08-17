@@ -189,5 +189,7 @@ class TestRedirectMustExist:
         expected = {'yay': 'it works'}
         n.assert_dict_equal(observed, expected)
 
-
-nose.main()
+result = nose.run()
+shutil.rmtree(app.NGINX_SITES)
+os.makedirs(app.NGINX_SITES)
+exit(result)
