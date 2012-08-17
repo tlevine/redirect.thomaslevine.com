@@ -83,7 +83,14 @@
 			  $.ajax({
 			    url: action,
 			    type: 'put',
-			    data: f.serialize()
+			    data: f.serialize(),
+			    success: function(res){
+			      $('#create').hide();
+			      alert('Done!');
+			    },
+			    error: function(){
+			      alert('Something didn\'t work. Oops.');
+			    }
 			  });
 			});
 
