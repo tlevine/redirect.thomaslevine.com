@@ -5,6 +5,7 @@ import datetime
 import string
 from time import sleep
 import json
+import uuid
 
 import requests
 import nose
@@ -49,14 +50,23 @@ class TestNoId:
         self._no_id(requests.delete)
 
 class Base:
-    simple_params = {
-        'from': 'example.com',
-        'to': 'www.example.com',
-    }
     def setUp(self):
         """This method is run once before _each_ test method is executed"""
         # Make a temporary redirect
         self.url = api_url()
+
+        # Temporary from value
+        self.uuid = unicode(uuid.uuid1()) 
+
+        # A few versions of the addresses
+        self.simple_params = {
+            'from': self.uuid + 'example.com',
+            'to': 'www.example.com',
+        }
+        self.http_params = {
+            'from': 'http://' + self.uuid + 'example.com',
+            'to': 'http://www.example.com',
+        }
  
     def teardown(self):
         """This method is run once after _each_ test method is executed"""
@@ -64,16 +74,10 @@ class Base:
         requests.delete(self.url)
 
 class TestAPI(Base):
-    def teardown(self):
-        requests.delete(self.url)
-
-    def teardown(self):
-        requests.delete(self.url)
-
     def test_content_type(self):
         "The content type should be JSON."
         r = requests.get(self.url)
-        n.assert_equal(r.headers['content-type'], 'application/json; charset=utf-8')
+        n.assert_equal(r.headers['Content-Type'], 'application/json; charset=utf-8')
 
     def test_basic_put(self):
         "A basic put should work."
@@ -82,8 +86,8 @@ class TestAPI(Base):
         n.assert_equal(r1.content, '')
 
         r2 = requests.get(self.url)
-        n.assert_equal(r1.status_code, 200)
-        n.assert_dict_contains_subset(self.simple_params, json.loads(r1.text))
+        n.assert_equal(r2.status_code, 200)
+        n.assert_dict_contains_subset(self.http_params, json.loads(r2.text))
 
     def test_advanced_put(self):
         "A put with email and status_code should work."
