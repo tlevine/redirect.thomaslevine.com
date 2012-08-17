@@ -2,12 +2,12 @@ server {
   listen 80;
   server_name redirect.thomaslevine.com;
 
-# # Splash page
-# index index.html index.htm;
-# location / {
-#   autoindex on;
-#   alias /srv/splash/;
-# }
+  # Splash page
+  index index.html index.htm;
+  location / {
+    autoindex on;
+    alias /srv/splash/;
+  }
 
   # Version 1 of the API
   location / {

@@ -15,9 +15,6 @@ rm -R /etc/nginx/conf.d
 mkdir /etc/nginx/conf.d
 mv $cgi /etc/nginx/conf.d/0-redirect.thomaslevine.com
 
-# Chown nginx sites directory to www-data
-chown -R www-data: /etc/nginx/conf.d
-
 # Chown slash page to www-data
 chown -R www-data: /srv/splash
 
@@ -32,6 +29,9 @@ useradd uwsgi
 chown uwsgi: /home/uwsgi
 chown -R uwsgi: /srv/v1
 chmod +x /srv/v1/app.py
+
+# Chown nginx sites directory to uwsgi so it can edit it
+chown -R uwsgi: /etc/nginx/conf.d
 
 # Daemon hack
 apt-get install tmux
