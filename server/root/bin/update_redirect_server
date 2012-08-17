@@ -6,7 +6,12 @@
 chown -R www-data: /srv/splash
 
 su uwsgi -c 'killall python'
+sleep 1s
 su uwsgi -c 'tmux kill-session'
+sleep 1s
 su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
+sleep 1s
 
 service nginx restart
+echo The configuration pseudo-daemon doesn\'t really work properly, so you
+echo might just want to ssh in, su to uwsgy and start /srv/v1/app.py in a tmux.
