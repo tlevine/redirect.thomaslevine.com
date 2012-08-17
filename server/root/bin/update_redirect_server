@@ -1,0 +1,5 @@
+#!/bin/sh
+# Run this script on the server to push a new version of the site to the
+# ChicagoVPS running Ubuntu 11.10.
+
+

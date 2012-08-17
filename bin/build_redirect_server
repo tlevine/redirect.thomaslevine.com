@@ -1,7 +1,11 @@
 #!/bin/sh
-host=$1
-# Maybe redirect.thomaslevine.com
-[ host = '' ] && echo specify a host && exit 1
+
+# redirect.thomaslevine.com once that works
+host=108.174.51.19
+
+action=$1
+( [ action = 'install' ] || [ action = 'update' ] ) ||
+  echo install or update? && exit 1
 
 # Make sure that git root is set
 env|grep -E '^GIT_ROOT=' > /dev/null ||
@@ -12,4 +16,4 @@ scp -Cpr "${GIT_ROOT}"/server/* root@${host}:/
 scp -pC "${GIT_ROOT}"/application/app.py root@${host}:/srv/v1/app.py
 
 # Run the build script
-ssh root@${host} 'sh /root/bin/build_redirect_server'
+ssh root@${host} "sh /root/bin/${action}_redirect_server"
