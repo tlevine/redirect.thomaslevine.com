@@ -47,7 +47,7 @@ managing subdomains, so you might need to enter "" (nothing),
 "[thomaslevine.com](http://thomaslevine.com)", or "@" in whatever form you're using. If you're editing the
 zone file directly, this line should work.
 
-    @ 10800 IN A 217.70.184.38
+    @ 10800 IN A 108.174.51.19
 
 You'll have to wait some time, between a few minutes and a few days, for the
 change to be propogated to the world's DNS servers. Once that happens, you can

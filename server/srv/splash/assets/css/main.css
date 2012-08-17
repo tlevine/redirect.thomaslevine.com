@@ -377,6 +377,10 @@ select {
 	display: block;
 }
 
+.address {
+	font-style: italic;
+}
+
 #main {
 	margin: 4% 10%;
 	width: 80%;
