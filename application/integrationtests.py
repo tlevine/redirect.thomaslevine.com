@@ -216,8 +216,10 @@ class TestAuthorization:
         self.url_old = api_url()
         self.url = api_url()
 
+        self.from_address = unicode(uuid.uuid1()) + 'TEST'
+
         params = {
-            'from': 'example.com',
+            'from': self.from_address,
             'to': 'www.example.com',
             'status_code': 301,
         }
@@ -236,16 +238,17 @@ class TestAuthorization:
 
         # Create my redirect
         params1 = {
-            'from': 'thomaslevine.com',
+            'from': unicode(uuid.uuid1()),
             'to': 'www.thomaslevine.com',
             'status_code': 303,
         }
+
         requests.put(self.url, params1)
         sleep(1)
 
         # Change it.
         params2 = {
-            'from': 'example.com',
+            'from': self.from_address,
         }
         r = requests.post(self.url, params2)
         self._check_sameness_error(r)
@@ -253,7 +256,7 @@ class TestAuthorization:
     def test_put(self):
         "If you put the update"
         params = {
-            'from': 'example.com',
+            'from': self.from_address,
             'to': 'www.thomaslevine.com',
             'status_code': 303,
         }
@@ -265,7 +268,7 @@ class TestAuthorization:
         data = json.loads(r.text)
         n.assert_equal(r.status_code, 403)
         n.assert_in('error', data)
-        n.assert_equal(data['error'], u"There's already a different redirect from example.com. If you think there shouldn't be, contact Tom.")
+        n.assert_regexp_matches(data['error'], r"There's already a different redirect from [0-9A-Za-z-]+TEST. If you think there shouldn't be, contact Tom.")
 
 def test_splash_page():
     "There should be a splash page at /"
