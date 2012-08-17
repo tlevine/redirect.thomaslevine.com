@@ -367,8 +367,20 @@ sub {
 /* Primary styles
 ---------------------------------------- */
 
+html, body,
+label, input, select {
+	width: 90%;
+	margin: 0.5em 0;
+}
 
+select {
+	display: block;
+}
 
+#main {
+	margin: 4% 10%;
+	width: 80%;
+}
 
 
 

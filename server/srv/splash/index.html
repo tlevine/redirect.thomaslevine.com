@@ -23,38 +23,40 @@
 		<script src="assets/js/respond.min.js"></script>
 	</head>
 	<body>
-		<h1>Chasing the wild goose</h1>
-		<p>
-			Let's say I want <a href="http://example.com">example.com</a> to redirect to
-			<a href="http://www.example.com">www.example.com</a>. This is what I do.
-		</p>
-		<ol>
-			<li>Fill out this form.</li>
-			<li>Tell my DNS provider to point <a href="http://example.com">example.com</a> to "108.174.51.19"</li>
-			<li>Wait a couple days for the DNS information to propogate.</li>
-		<ol>
-		<p>
-			Once that's done, requests for <a href="http://example.com">example.com</a>
-			will be forwarded to <a href="http://www.example.com">www.example.com</a>.
-		</p>
-		<noscript>The form requires JavaScript, but your browser doesn't allow it :(</noscript>
-		<form id="make-redirect" style="display: none;">
-			<input type="text" id="from" name="from" placeholder="example.com"></input>
-			<input type="text" id="to"  name="to" placeholder="www.example.com"></input>
-			<input type="text" id="email" name="email" placeholder="example.com"></input>
-			<p id="show-advanced">Show advanced options.</p>
-			<div id="advanced" style="display: none;">
-				<label for="status_code">Status code for the redirect</label>
-				<select name="status_code">
-					<option value="301">301 Moved permanently</option>
-					<option value="303" selected>303 See other</option>
-				</select>
-				<label for="redirect_url">URL of an existing redirect if you want to update it</label>
-				<input id="redirect_url" type="text" name="redirect_url"></input>
-			</div>
-		</form>
-		<button id="create">Go</button>
-		<p>Read more <a href="https://github.com/tlevine/redirect.thomaslevine.com">here</a>.</p>
+		<div id="main">
+			<h1>Chasing the wild goose</h1>
+			<p>
+				Let's say I want <a href="http://example.com">example.com</a> to redirect to
+				<a href="http://www.example.com">www.example.com</a>. This is what I do.
+			</p>
+			<ol>
+				<li>Fill out this form.</li>
+				<li>Tell my DNS provider to point <a href="http://example.com">example.com</a> to "108.174.51.19"</li>
+				<li>Wait a couple days for the DNS information to propogate.</li>
+			</ol>
+			<p>
+				Once that's done, requests for <a href="http://example.com">example.com</a>
+				will be forwarded to <a href="http://www.example.com">www.example.com</a>.
+			</p>
+			<noscript>The form requires JavaScript, but your browser doesn't allow it :(</noscript>
+			<form id="make-redirect" style="display: none;">
+				<input type="text" id="from" name="from" placeholder="example.com"></input>
+				<input type="text" id="to"  name="to" placeholder="www.example.com"></input>
+				<input type="text" id="email" name="email" placeholder="example.com"></input>
+				<p id="show-advanced">Show advanced options.</p>
+				<div id="advanced" style="display: none;">
+					<label for="status_code">Status code for the redirect</label>
+					<select name="status_code">
+						<option value="301">301 Moved permanently</option>
+						<option value="303" selected>303 See other</option>
+					</select>
+					<label for="redirect_url">URL of an existing redirect if you want to update it</label>
+					<input id="redirect_url" type="text" name="redirect_url"></input>
+				</div>
+			</form>
+			<button id="create">Go</button>
+			<p>Read more <a href="https://github.com/tlevine/redirect.thomaslevine.com">here</a>.</p>
+		</div>
 
 		<script src="assets/js/jquery.js"></script>
 		<script src="assets/js/uuid.js"></script>
@@ -63,7 +65,7 @@
 			var f = $('#make-redirect');
 
 			// Choose a box identifier.
-			$('#redirect_url').attr('placeholder', 'http://redirect.thomaslevine.com/v1/' + uuid.v1());
+			$('#redirect_url').attr('value', 'http://redirect.thomaslevine.com/v1/' + uuid.v1());
 
 			// Submit the form.
 			$('#create').click(function(){
