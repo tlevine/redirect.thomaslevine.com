@@ -6,15 +6,14 @@ import shutil
 
 from bottle import Bottle, run, request, response
 
+HOST = '127.0.0.1'
 PORT = 9002
 try:
     from dev_settings import ROOT
 except:
     ROOT = '/'
     DEV = False
-    HOST = 'localhost'
 else:
-    HOST = 'redirect.thomaslevine.com'
     DEV = True
 
 NGINX_SITES = os.path.join(ROOT, 'etc', 'nginx', 'conf.d')
