@@ -92,7 +92,7 @@
 			    data: f.serialize(),
 			    success: function(res){
 			      $('#create').hide();
-			      $('#make-redirect').html('<p>Save this link in case you want to edit the redirect in the future.</p><textarea id="save-this"></textarea');
+			      $('#make-redirect').html('<p><strong>Save this link in case you want to edit the redirect in the future.</strong></p><textarea id="save-this" readonly></textarea');
 			      $('#save-this').text(action);
 			      alert('Done!');
 			    },

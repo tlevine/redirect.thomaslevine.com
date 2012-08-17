@@ -368,7 +368,7 @@ sub {
 ---------------------------------------- */
 
 html, body, form,
-label, input, select {
+label, input, select, textarea {
 	width: 100%;
 	margin: 0;
 }
