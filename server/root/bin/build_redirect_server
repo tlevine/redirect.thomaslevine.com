@@ -40,8 +40,12 @@ pip install uwsgi
 
 # uWSGI web stuff
 adduser uwsgi
+chown uwsgi: /home/uwsgi
 chown -r uwsgi: /srv/v1
 chmod +x /srv/v1/app.py
+
+# Daemon hack
+su uwsgi -c 'echo "@reboot /srv/v1/app.py"'
 
 # Restart nginx to enable the new configuration.
 service nginx restart

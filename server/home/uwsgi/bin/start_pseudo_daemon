@@ -1,0 +1,3 @@
+#!/bin/sh
+
+tmux new-session -d 'python /srv/v1/app.py'
