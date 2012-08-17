@@ -2,7 +2,7 @@ import os
 import re
 from copy import copy
 import json
-import web
+from bottle import Bottle, run
 
 from settings import ROOT
 NGINX_SITES = os.path.join(ROOT, 'etc', 'nginx', 'conf.d')
@@ -11,12 +11,10 @@ try:
 except OSError:
     pass
 
-urls = (
-    '/v1/(.+)/?', 'redirects'
-)
-app = web.application(urls, globals())
+b = Bottle()
 
-def api(api_request_func):
+
+def api_webpy(api_request_func):
     'This stuff applies to all requests.'
 
     def wrapper(self, redirect_id):
@@ -38,16 +36,40 @@ def api(api_request_func):
 
     return wrapper
 
-class redirects:
-    @api
-    def GET(self, redirect_id):
-        try:
-            data = _open_nginx_redirect(redirect_id)
-        except OSError:
-            raise NotFound()
-        else:
-            return data
+def api(api_request_func):
+    'This stuff applies to all requests.'
 
+    def wrapper(redirect_id):
+        # JSON
+#       web.header('Content-Type', 'application/json; charset=utf-8')
+
+        # Validate the redirect_id
+        try:
+            _validate_redirect_id(redirect_id)
+        except ValueError, e:
+        #   return {'error': e.message}
+            raise BadRequest(e.message)
+
+        data = api_request_func(redirect_id)
+        if data:
+            return json.dumps(data)
+        else:
+            return ''
+
+    return wrapper
+
+@b.get('/v1/<redirect_id>')
+@api
+def get(redirect_id):
+    try:
+        data = _open_nginx_redirect(redirect_id)
+    except IOError, e:
+        # File doesn't exist
+        return {'error': 'oeuaoeu'}
+    else:
+        return data
+
+class redirects:
     @api
     def PUT(self, redirect_id):
         params = web.input()
@@ -165,4 +187,4 @@ def nginx_conf(orig_params):
 ''' % params
 
 if __name__ == "__main__":
-    app.run()
+    run(b, host='localhost', port=9002)
