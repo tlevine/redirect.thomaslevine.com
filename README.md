@@ -176,8 +176,9 @@ something like this
     curl -X DELETE http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
 ## Hosting
-This runs on a tiny server from Prometeus. The API is a CGI script that runs
-with fcgiwrap on nginx and edits nginx sites; each redirect is a site.
+This runs on a tiny server from ChicagoVPS. The API is a uWSGI application that
+runs inside of a tmux because I didn't feel like making a proper ademon. It
+edits nginx configuration files; each redirect is a server entry.
 
 ### Installing the server
 If we're lucky, the entire install process can be run without interactively
