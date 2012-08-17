@@ -6,15 +6,18 @@ import shutil
 
 from bottle import Bottle, run, request, response
 
-import settings
-if __name__ == "__main__":
-    ROOT = settings.ROOT_PRODUCTION
+PORT = 9002
+try:
+    from dev_settings import ROOT
+except:
+    ROOT = '/'
+    DEV = False
 else:
-    ROOT = settings.ROOT_TEST
+    DEV = True
 
 NGINX_SITES = os.path.join(ROOT, 'etc', 'nginx', 'conf.d')
 
-if __name__ != "__main__":
+if DEV:
     try:
         shutil.rmtree(NGINX_SITES)
     except OSError:
@@ -256,7 +259,7 @@ def nginx_conf(orig_params):
 ''' % params
 
 def main():
-    run(b, host='localhost', port=settings.PORT)
+    run(b, host='localhost', port=PORT)
 
 if __name__ == "__main__":
     main()

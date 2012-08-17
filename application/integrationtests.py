@@ -12,7 +12,7 @@ import requests
 import nose
 import nose.tools as n
 
-from settings import PORT
+from app import PORT
 API_DOMAIN='http://localhost:%d' % PORT
 
 def api_url(size=32, chars=string.letters + string.digits):
