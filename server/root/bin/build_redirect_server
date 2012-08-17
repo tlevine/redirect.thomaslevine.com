@@ -27,6 +27,9 @@ mv $cgi /etc/nginx/conf.d
 # Copy my nginx configuration
 cp -R ./conf.d /etc/nginx
 
+# Chown nginx sites directory to www-data
+chown -r www-data: /etc/nginx/conf.d
+
 # Chown web stuff to www-data
 chown -r www-data: /srv
 
