@@ -175,7 +175,7 @@ something like this
 
     curl -X DELETE http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
-## Technical details
+## Hosting
 This runs on a tiny server from Prometeus. The API is a CGI script that runs
 with fcgiwrap on nginx and edits nginx sites; each redirect is a site.
 
@@ -210,3 +210,8 @@ this daily or so.
 ### Integration tests
 Run `./bin/integration_tests` to run integration tests on the live site. Set up
 a cron job to do this daily or so.
+
+## Development
+Run `./bin/runlocal` to run a server on [localhost:9002](http://localhost:9002).
+Then you can run `nosetests2 integrationtests.py` from `./application` to run
+integration tests locally.
