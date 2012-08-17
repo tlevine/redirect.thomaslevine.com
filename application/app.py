@@ -12,7 +12,9 @@ try:
 except:
     ROOT = '/'
     DEV = False
+    HOST = 'localhost'
 else:
+    HOST = 'redirect.thomaslevine.com'
     DEV = True
 
 NGINX_SITES = os.path.join(ROOT, 'etc', 'nginx', 'conf.d')
@@ -262,7 +264,7 @@ def nginx_conf(orig_params):
 ''' % params
 
 def main():
-    run(b, host='localhost', port=PORT)
+    run(b, host=HOST, port=PORT)
 
 if __name__ == "__main__":
     main()
