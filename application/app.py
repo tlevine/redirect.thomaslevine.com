@@ -59,7 +59,8 @@ def api(api_request_func):
         try:
             _validate_redirect_id(redirect_id)
         except ValueError, e:
-            raise BadRequest(e.message)
+            response.status = 400
+            return {'error': e.message}
 
         data = api_request_func(redirect_id)
         if data:
