@@ -93,19 +93,21 @@ class TestAPI(Base):
 
     def test_advanced_put(self):
         "A put with email and status_code should work."
-        params = {
-            'from': 'example.com',
-            'to': 'www.example.com',
+        extra = {
             'status_code': 303,
             'email': 'occurrence@example.com',
         }
-        r1 = requests.put(self.url, params)
+        self.simple_params.update(extra)
+        self.http_params.update(extra)
+
+        r1 = requests.put(self.url, self.simple_params)
         n.assert_equal(r1.status_code, 204)
-        n.assert_equal(r1.text, '')
+        n.assert_equal(r1.content, '')
 
         r2 = requests.get(self.url)
-        n.assert_equal(r1.status_code, 200)
-        n.assert_dict_contains_subset(params, json.loads(r1.text))
+        n.assert_equal(r2.status_code, 200)
+
+        n.assert_dict_equal(json.loads(r2.text), self.http_params)
 
 #   def test_creation_date(self):
 #       "If I create a record and then read it, it should have a creation date."
