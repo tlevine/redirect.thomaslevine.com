@@ -66,8 +66,29 @@ def get(redirect_id):
 @redirect_must_exist
 @api
 def post(redirect_id):
-    data = _open_nginx_redirect(redirect_id)
-    return data
+    params = _open_nginx_redirect(redirect_id)
+
+    if 'from' in request.query:
+        params['from'] = request.query['from'].encode('utf-8')
+    if 'to' in request.query:
+        params['to'] = request.query['to'].encode('utf-8')
+    if 'status_code' in request.query:
+        params['status_code'] = int(request.query.get('status_code', 303))
+    if 'email' in request.query:
+        params['email'] = request.query.get('email', '').encode('utf-8')
+
+    if 'from' in params and params['from'] in _current_froms(ROOT, redirect_id):
+        response.status = 403
+        return { 'error':
+            "There's already a different redirect from %s. If you think"
+            "there shouldn't be, contact Tom." % redirect_id
+        }
+    else:
+        f = open(os.path.join(NGINX_SITES, '1-' + redirect_id), 'w')
+        f.write(nginx_conf(params))
+        f.close()
+        response.status = 204
+        return
 
 @b.put('/v1/<redirect_id>')
 @api
