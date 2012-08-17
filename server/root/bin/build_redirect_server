@@ -27,10 +27,10 @@ mv $cgi /etc/nginx/conf.d
 cp -R ~/etc/conf.d /etc/nginx
 
 # Chown nginx sites directory to www-data
-chown -r www-data: /etc/nginx/conf.d
+chown -R www-data: /etc/nginx/conf.d
 
 # Chown slash page to www-data
-chown -r www-data: /srv/splash
+chown -R www-data: /srv/splash
 
 
 
@@ -41,7 +41,7 @@ pip install uwsgi
 # uWSGI web stuff
 adduser uwsgi
 chown uwsgi: /home/uwsgi
-chown -r uwsgi: /srv/v1
+chown -R uwsgi: /srv/v1
 chmod +x /srv/v1/app.py
 
 # Daemon hack
