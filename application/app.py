@@ -2,7 +2,7 @@ import os
 import re
 from copy import copy
 import json
-from bottle import Bottle, run
+from bottle import Bottle, run, request
 
 import settings
 if __name__ == "__main__":
@@ -20,7 +20,6 @@ def redirect_filename(redirect_id):
 
 
 b = Bottle()
-
 
 def redirect_must_exist(api_request_func):
     'Return an HTTP error if the redirect doesn\'t exist.'
@@ -62,30 +61,35 @@ def get(redirect_id):
     return _open_nginx_redirect(redirect_id)
 
 @b.post('/v1/<redirect_id>')
+@redirect_must_exist
 @api
 def post(redirect_id):
-    try:
-        data = _open_nginx_redirect(redirect_id)
-    except IOError, e:
-        # File doesn't exist
-        return { "error": "That redirect doesn't exist. Use PUT to create it." }
-    else:
-        return data
+    data = _open_nginx_redirect(redirect_id)
 
-class redirects:
-    @api
-    def PUT(self, redirect_id):
-        params = web.input()
-        if params['from'] in _current_froms(ROOT, redirect_id):
-            raise Forbidden(
-                "There's already a different redirect from %s. If you think"
-                "there shouldn't be, contact Tom." % redirect_id
-            )
-        else:
-            f = open(os.path.join(NGINX_SITES, '1-' + redirect_id), 'w')
-            f.write(nginx_conf(params))
-            f.close()
-            return
+@b.put('/v1/<redirect_id>')
+@api
+def put(redirect_id):
+    missing_keys = {'from', 'to'}.difference(request.query.keys())
+    if len(missing_keys) != 0:
+        return {'error': 'You must specify the following addresses: "%s"' % '","'.join(missing_keys)}
+
+    params = {
+        'from': request.query['from'].encode('utf-8'),
+        'to': request.query['to'].encode('utf-8'),
+        'status_code': int(request.query.get('status_code', 303)),
+        'email': request.query.get('email', '').encode('utf-8'),
+    }
+        
+    if params['from'] in _current_froms(ROOT, redirect_id):
+        raise Forbidden(
+            "There's already a different redirect from %s. If you think"
+            "there shouldn't be, contact Tom." % redirect_id
+        )
+    else:
+        f = open(os.path.join(NGINX_SITES, '1-' + redirect_id), 'w')
+        f.write(nginx_conf(params))
+        f.close()
+        return
 
 def _validate_redirect_id(redirect_id):
     if '/' in redirect_id:

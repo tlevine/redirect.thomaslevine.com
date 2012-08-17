@@ -201,8 +201,8 @@ class TestAPI(Base):
 
         data = json.loads(r.text)
         n.assert_in('error', data)
-        n.assert_in('"from"', data)
-        n.assert_not_in('"to"', data)
+        n.assert_in('"from"', data['error'])
+        n.assert_not_in('"to"', data['error'])
 
 class TestAuthorization:
     'If I try to make a redirect with a from that already exists, I should get an error.'
