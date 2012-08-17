@@ -1,8 +1,8 @@
 #!/bin/sh
 # Run this script on the server to install dependencies.
-# It expects Arch Linux from ChicagoVPS.
+# It expects Ubuntu 11.10 from ChicagoVPS.
 
-# apt-get update
+apt-get update
 
 # Install nginx
 apt-get install nginx
@@ -41,3 +41,13 @@ su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
 
 # Restart nginx to enable the new configuration.
 service nginx restart
+
+echo "All should be installed and running. Let's test the home page"
+apt-get install curl
+curl localhost:9002
+
+echo "Let's see if the proxy pass works. This should give an error."
+curl localhost/v1
+
+echo "Now let's test another page. This should give an error too."
+curl localhost/v1/foobar
