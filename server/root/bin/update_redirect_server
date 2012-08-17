@@ -5,6 +5,7 @@
 # Chown slash page to www-data
 chown -R www-data: /srv/splash
 
+su uwsgi -c 'killall python'
 su uwsgi -c 'tmux kill-session'
 su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
 
