@@ -27,13 +27,13 @@
 		<div id="main">
 			<h1>Chasing the wild goose</h1>
 			<p>
-				Let's say I want <span class=address>example.com</span> to redirect to
-				<span class=address>www.example.com</span>. This is what I do.
+				Let's say you want <span class=address>example.com</span> to redirect to
+				<span class=address>www.example.com</span>. This is what you do.
 			</p>
 			<ol>
-				<li>Fill out this form.</li>
+				<li>Put "example.com" in the "from" field and "www.example.com" in the "to" field.</li>
 				<li>
-					Tell my DNS provider to make an A record pointing <span class=address>example.com</span> to
+					Tell your DNS provider to make an A record pointing <span class=address>example.com</span> to
 					"<span class=address>108.174.51.19</span>". (For directions, search for "A record [your host's name]".)
 				</li>
 				<li>Wait a couple days for the DNS information to propogate.</li>
@@ -71,7 +71,7 @@
 		<script src="assets/js/uuid.js"></script>
 		<script>
 			// If it looks like we need to reload the nginx conf because a different page is landing here, say so.
-			if (document.location.origin != 'http://rewrite.thomaslevine.com') {
+			if (document.location.origin != 'http://redirect.thomaslevine.com') {
 			  $('#dns-error').attr('style', '');
 			}
 
