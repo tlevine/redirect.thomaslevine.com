@@ -4,6 +4,7 @@ import random
 import datetime
 import string
 from time import sleep
+from copy import copy
 import json
 import uuid
 
@@ -126,16 +127,9 @@ class TestAPI(Base):
 
     def test_put_put(self):
         'If I make different puts, the response should change.'
-        params1 = {
-            'from': 'example.com',
-            'to': 'www.example.com',
-            'status_code': 301,
-        }
-        params2 = {
-            'from': 'example.com',
-            'to': 'www.example.com',
-            'status_code': 303,
-        }
+        params1 = self.simple_params
+        params2 = copy(self.simple_params)
+        params2['status_code'] = 301
 
         requests.put(self.url, params1)
         data1 = json.loads(requests.get(self.url).text)
@@ -143,29 +137,29 @@ class TestAPI(Base):
         requests.put(self.url, params2)
         data2 = json.loads(requests.get(self.url).text)
 
-        n.assert_not_equal(data1, data2)
-        data1['status_code'] = 303
+        n.assert_equal(data1['status_code'], 303)
+        n.assert_equal(data1['status_code'], 303)
+        del(data1['status_code'])
+        del(data2['status_code'])
         n.assert_equal(data1, data2)
 
     def test_put_post(self):
         'If I create and then update, the response should change.'
-        params1 = {
-            'from': 'example.com',
-            'to': 'www.example.com',
+        params_update = {
             'status_code': 301,
         }
-        params2 = {
-            'status_code': 303,
-        }
 
-        requests.put(self.url, params1)
+        requests.put(self.url, self.simple_params)
         data1 = json.loads(requests.get(self.url).text)
+        n.assert_equal(data1['status_code'], 303)
         sleep(1)
-        requests.post(self.url, params2)
-        data2 = json.loads(requests.get(self.url).text)
 
-        n.assert_not_equal(data1, data2)
-        data1['status_code'] = 303
+        requests.post(self.url, params_update)
+        data2 = json.loads(requests.get(self.url).text)
+        n.assert_equal(data2['status_code'], 301)
+
+        del(data1['status_code'])
+        del(data2['status_code'])
         n.assert_equal(data1, data2)
 
     def test_delete(self):
