@@ -2,7 +2,7 @@ import os
 import re
 from copy import copy
 import json
-from bottle import Bottle, run, request
+from bottle import Bottle, run, request, response
 
 import settings
 if __name__ == "__main__":
@@ -37,8 +37,9 @@ def api(api_request_func):
     'This stuff applies to all requests.'
 
     def wrapper(redirect_id):
-        # JSON
-#       web.header('Content-Type', 'application/json; charset=utf-8')
+        # Standard response header
+        response.set_header('Content-Language', 'en')
+        response.set_header('Content-Type', 'application/json; charset=utf-8')
 
         # Validate the redirect_id
         try:
@@ -58,19 +59,22 @@ def api(api_request_func):
 @redirect_must_exist
 @api
 def get(redirect_id):
-    return _open_nginx_redirect(redirect_id)
+    data = _open_nginx_redirect(redirect_id)
+    return data
 
 @b.post('/v1/<redirect_id>')
 @redirect_must_exist
 @api
 def post(redirect_id):
     data = _open_nginx_redirect(redirect_id)
+    return data
 
 @b.put('/v1/<redirect_id>')
 @api
 def put(redirect_id):
     missing_keys = {'from', 'to'}.difference(request.query.keys())
     if len(missing_keys) != 0:
+        response.status = 400
         return {'error': 'You must specify the following addresses: "%s"' % '","'.join(missing_keys)}
 
     params = {
@@ -81,14 +85,16 @@ def put(redirect_id):
     }
         
     if params['from'] in _current_froms(ROOT, redirect_id):
-        raise Forbidden(
+        response.status = 403
+        return { 'error':
             "There's already a different redirect from %s. If you think"
             "there shouldn't be, contact Tom." % redirect_id
-        )
+        }
     else:
         f = open(os.path.join(NGINX_SITES, '1-' + redirect_id), 'w')
         f.write(nginx_conf(params))
         f.close()
+        response.status = 204
         return
 
 def _validate_redirect_id(redirect_id):
@@ -147,7 +153,7 @@ def _parse_nginx_redirect(conf):
 
 def _open_nginx_redirect(redirect_id):
     f = open(redirect_filename(redirect_id), 'r')
-    data = _parse_nginx_conf(f.read())
+    data = _parse_nginx_redirect(f.read())
     f.close()
     return data
 
@@ -184,5 +190,8 @@ def nginx_conf(orig_params):
 }
 ''' % params
 
-if __name__ == "__main__":
+def main():
     run(b, host='localhost', port=9002)
+
+if __name__ == "__main__":
+    main()
