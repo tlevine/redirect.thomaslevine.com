@@ -26,24 +26,29 @@
 		<div id="main">
 			<h1>Chasing the wild goose</h1>
 			<p>
-				Let's say I want example.com to redirect to
-				www.example.com. This is what I do.
+				Let's say I want <span class=address>example.com</span> to redirect to
+				<span class=address>www.example.com</span>. This is what I do.
 			</p>
 			<ol>
 				<li>Fill out this form.</li>
-				<li>Tell my DNS provider to point <span class=address>example.com</span> to "<span class=address>108.174.51.19</span>"</li>
+				<li>
+					Tell my DNS provider to make an A record pointing <span class=address>example.com</span> to
+					"<span class=address>108.174.51.19</span>". (For directions, search for "A record [your host's name]".)
+				</li>
 				<li>Wait a couple days for the DNS information to propogate.</li>
 			</ol>
 			<p>
 				After that, <span class=address>example.com</span> will be forwarded to <span class=address>www.example.com</span>.
 			</p>
-			<noscript>The form requires JavaScript, but your browser doesn't allow it :(</noscript>
 			<form id="make-redirect" style="display: none;">
+				<label for="from">From</label>
 				<input type="text" id="from" name="from" placeholder="example.com"></input>
+				<label for="to">To</label>
 				<input type="text" id="to"  name="to" placeholder="www.example.com"></input>
-				<input type="text" id="email" name="email" placeholder="example.com"></input>
-				<p id="show-advanced">Show advanced options.</p>
+				<span id="show-advanced">Show advanced options.</span>
 				<div id="advanced" style="display: none;">
+					<label for="email">Email address (optional)</label>
+					<input type="text" id="email" name="email" placeholder="tom@example.com"></input>
 					<label for="status_code">Status code for the redirect</label>
 					<select name="status_code">
 						<option value="301">301 Moved permanently</option>
@@ -53,8 +58,12 @@
 					<input id="redirect_url" type="text" name="redirect_url"></input>
 				</div>
 			</form>
-			<button id="create">Go</button>
-			<p>Read more <a href="https://github.com/tlevine/redirect.thomaslevine.com">here</a>.</p>
+			<button id="create" style="display: none;">Go</button>
+			<p>
+				Read more <a href="https://github.com/tlevine/redirect.thomaslevine.com">here</a>.
+				Send questions and whatnot <a href="https://twitter.com/thomaslevine">here</a> or <a href="http://thomaslevine.com">here</a>.
+			</p>
+			<noscript>The form requires JavaScript, but your browser doesn't allow it :(</noscript>
 		</div>
 
 		<script src="assets/js/jquery.js"></script>
@@ -86,6 +95,21 @@
 
 			// Display the form.
 			f.attr('style', '');
+			$('#create').attr('style', '');
 		</script>
+
+		<!-- Piwik --> 
+		<script type="text/javascript">
+		var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.thomaslevine.com/" : "http://piwik.thomaslevine.com/");
+		document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+		</script><script type="text/javascript">
+		try {
+		var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 9);
+		piwikTracker.trackPageView();
+		piwikTracker.enableLinkTracking();
+		} catch( err ) {}
+		</script><noscript><p><img src="http://piwik.thomaslevine.com/piwik.php?idsite=9" style="border:0" alt="" /></p></noscript>
+		<!-- End Piwik Tracking Code -->
+
 	</body>
 </html>

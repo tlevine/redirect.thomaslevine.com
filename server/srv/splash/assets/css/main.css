@@ -367,13 +367,17 @@ sub {
 /* Primary styles
 ---------------------------------------- */
 
-html, body,
+html, body, form,
 label, input, select {
-	width: 90%;
-	margin: 0.5em 0;
+	width: 100%;
+	margin: 0;
 }
 
-select {
+label {
+	margin-top: 2em;
+}
+
+label, input, select {
 	display: block;
 }
 
@@ -382,12 +386,27 @@ select {
 }
 
 #main {
-	margin: 4% 10%;
-	width: 80%;
+	margin: 4% 45% 4% 5%;
+	width: 50%;
+	min-width: 240px;
+	max-width: 640px;
 }
 
+#create {
+	width: 5em;
+}
 
+#create, #show-advanced, #read-more {
+	display: block;
+	margin-top: 1em;
+}
 
+#show-advanced{
+	color: #06c;
+	text-decoration: underline;
+	cursor: pointer;
+	width: 90%
+}
 
 
 
