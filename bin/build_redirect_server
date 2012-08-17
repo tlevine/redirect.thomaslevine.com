@@ -4,8 +4,11 @@
 host=108.174.51.19
 
 action=$1
-( [ "$action" = 'install' ] || [ "$action" = 'update' ] ) ||
-  ( echo install or update? && exit 1 )
+if [ "$action" != 'install' ] && [ "$action" != 'update' ]
+  then
+  echo install or update? 
+  exit 1
+fi
 
 # Make sure that git root is set
 env|grep -E '^GIT_ROOT=' > /dev/null ||

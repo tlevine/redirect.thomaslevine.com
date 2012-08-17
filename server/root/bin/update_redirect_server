@@ -2,4 +2,8 @@
 # Run this script on the server to push a new version of the site to the
 # ChicagoVPS running Ubuntu 11.10.
 
+# Chown slash page to www-data
+chown -R www-data: /srv/splash
 
+su uwsgi -c 'tmux kill-session'
+su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'

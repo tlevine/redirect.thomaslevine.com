@@ -36,7 +36,7 @@ chown -R uwsgi: /etc/nginx/conf.d
 # Daemon hack
 apt-get install tmux
 chmod +x /home/uwsgi/bin/start_pseudo_daemon
-su uwsgi -c 'echo "@reboot /home/uwsgi/bin/start_pseudo_daemon"'
+su uwsgi -c 'echo "@reboot /home/uwsgi/bin/start_pseudo_daemon" | crontab -'
 su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
 
 # Restart nginx to enable the new configuration.
