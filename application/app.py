@@ -2,6 +2,8 @@ import os
 import re
 from copy import copy
 import json
+import shutil
+
 from bottle import Bottle, run, request, response
 
 import settings
@@ -11,10 +13,18 @@ else:
     ROOT = settings.ROOT_TEST
 
 NGINX_SITES = os.path.join(ROOT, 'etc', 'nginx', 'conf.d')
+
+if __name__ != "__main__":
+    try:
+        shutil.rmtree(NGINX_SITES)
+    except OSError:
+        pass
+
 try:
     os.makedirs(NGINX_SITES)
 except OSError:
     pass
+
 def redirect_filename(redirect_id):
     return os.path.join(NGINX_SITES, '1-' + redirect_id)
 
@@ -214,13 +224,14 @@ def _open_nginx_redirect(redirect_id):
 
 def _current_froms(root, exclude):
     'Currently listed from addresses, excluding the one named $exclude'
+    nginx_sites = os.path.join(root, 'etc', 'nginx', 'conf.d')
     froms = set()
-    for filename in os.listdir(NGINX_SITES):
+    for filename in os.listdir(nginx_sites):
         if filename[0] == '0':
            continue
         elif filename == '1-' + exclude:
            continue
-        f = open(os.path.join(NGINX_SITES, filename), 'r')
+        f = open(os.path.join(nginx_sites, filename), 'r')
         froms.add(_parse_nginx_redirect(f.read())['from'])
         f.close()
     return froms
