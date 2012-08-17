@@ -29,6 +29,7 @@ def redirect_must_exist(api_request_func):
             return api_request_func(redirect_id)
         else:
             # The redirect file doesn't exist
+            response.status = 404
             return { "error": "That redirect doesn't exist. Use PUT to create it." }
 
     return wrapper

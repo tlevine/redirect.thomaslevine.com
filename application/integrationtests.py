@@ -64,6 +64,12 @@ class Base:
         requests.delete(self.url)
 
 class TestAPI(Base):
+    def teardown(self):
+        requests.delete(self.url)
+
+    def teardown(self):
+        requests.delete(self.url)
+
     def test_content_type(self):
         "The content type should be JSON."
         r = requests.get(self.url)
@@ -73,7 +79,7 @@ class TestAPI(Base):
         "A basic put should work."
         r1 = requests.put(self.url, self.simple_params)
         n.assert_equal(r1.status_code, 204)
-        n.assert_equal(r1.text, '')
+        n.assert_equal(r1.content, '')
 
         r2 = requests.get(self.url)
         n.assert_equal(r1.status_code, 200)
@@ -163,14 +169,14 @@ class TestAPI(Base):
         requests.put(self.url, self.simple_params)
         r = requests.delete(self.url)
         n.assert_equal(r.status_code, 204)
-        n.assert_equal(r.text, '')
+        n.assert_equal(r.content, '')
 
     def test_delete_nonexistant(self):
         'I should receive an error if the redirect doesn\'t exist.'
         requests.put(self.url, self.simple_params)
         r = requests.delete(self.url)
         n.assert_equal(r.status_code, 404)
-        n.assert_equal(r.text, '')
+        n.assert_equal(r.content, '')
 
     def test_post_nonexistant(self):
         'I should receive an error if the redirect doesn\'t exist.'
