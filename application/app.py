@@ -14,25 +14,22 @@ except OSError:
 b = Bottle()
 
 
-def api_webpy(api_request_func):
-    'This stuff applies to all requests.'
+def redirect_must_exist(api_request_func):
+    'Return an HTTP error if the redirect doesn\'t exist.'
 
-    def wrapper(self, redirect_id):
-        # JSON
-        web.header('Content-Type', 'application/json; charset=utf-8')
-
-        # Validate the redirect_id
+    def wrapper(redirect_id):
         try:
-            _validate_redirect_id(redirect_id)
-        except ValueError, e:
-        #   return {'error': e.message}
-            raise BadRequest(e.message)
-
-        data = api_request_func(self, redirect_id)
-        if data and type(data) == dict:
-            return json.dumps(data)
+            data = api_request_func(redirect_id)
+        except IOError, e:
+            if re.match(r'/1-' + redirect_id + '\'$', e.message):
+                # The redirect file doesn't exist
+                return { "error": "That redirect doesn't exist. Use PUT to create it." }
+            else:
+                # Some other file doesn't exist
+                raise
         else:
-            return ''
+            # All is well
+            return data
 
     return wrapper
 
@@ -60,12 +57,25 @@ def api(api_request_func):
 
 @b.get('/v1/<redirect_id>')
 @api
+@redirect_must_exist
 def get(redirect_id):
     try:
         data = _open_nginx_redirect(redirect_id)
     except IOError, e:
+        raise #print e.message
         # File doesn't exist
-        return {'error': 'oeuaoeu'}
+        return { "error": "That redirect doesn't exist. Use PUT to create it." }
+    else:
+        return data
+
+@b.post('/v1/<redirect_id>')
+@api
+def post(redirect_id):
+    try:
+        data = _open_nginx_redirect(redirect_id)
+    except IOError, e:
+        # File doesn't exist
+        return { "error": "That redirect doesn't exist. Use PUT to create it." }
     else:
         return data
 
@@ -83,14 +93,6 @@ class redirects:
             f.write(nginx_conf(params))
             f.close()
             return
-
-    @api
-    def POST(self, redirect_id):
-        return {}
-
-    @api
-    def DELETE(self, redirect_id):
-        return {}
 
 def _validate_redirect_id(redirect_id):
     if '/' in redirect_id:
