@@ -55,7 +55,24 @@ def api(api_request_func):
 
     return wrapper
 
+@b.get('/v1/')
+@b.post('/v1/')
+@b.put('/v1/')
+@b.delete('/v1/')
+@b.get('/v1')
+@b.post('/v1')
+@b.put('/v1')
+@b.delete('/v1')
+def v1():
+    response.set_header('Content-Language', 'en')
+    response.set_header('Content-Type', 'application/json; charset=utf-8')
+    response.status = 400
+    return json.dumps({
+        'error': 'You must specify a redirect name after /v1/'
+    })
+
 @b.get('/v1/<redirect_id>')
+@b.get('/v1/<redirect_id>/')
 @redirect_must_exist
 @api
 def get(redirect_id):
@@ -63,6 +80,7 @@ def get(redirect_id):
     return data
 
 @b.post('/v1/<redirect_id>')
+@b.post('/v1/<redirect_id>/')
 @redirect_must_exist
 @api
 def post(redirect_id):
@@ -90,6 +108,7 @@ def post(redirect_id):
         response.status = 204
 
 @b.put('/v1/<redirect_id>')
+@b.put('/v1/<redirect_id>/')
 @api
 def put(redirect_id):
     missing_keys = {'from', 'to'}.difference(request.params.keys())
@@ -117,6 +136,7 @@ def put(redirect_id):
         response.status = 204
 
 @b.delete('/v1/<redirect_id>')
+@b.delete('/v1/<redirect_id>/')
 @redirect_must_exist
 @api
 def delete(redirect_id):
