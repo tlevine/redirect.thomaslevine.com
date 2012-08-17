@@ -68,27 +68,26 @@ def get(redirect_id):
 def post(redirect_id):
     params = _open_nginx_redirect(redirect_id)
 
-    if 'from' in request.query:
-        params['from'] = request.query['from']
-    if 'to' in request.query:
-        params['to'] = request.query['to']
-    if 'status_code' in request.query:
-        params['status_code'] = int(request.query.get('status_code', 303))
-    if 'email' in request.query:
-        params['email'] = request.query.get('email', '')
+    if 'from' in request.params:
+        params['from'] = request.params['from']
+    if 'to' in request.params:
+        params['to'] = request.params['to']
+    if 'status_code' in request.params:
+        params['status_code'] = int(request.params.get('status_code', 303))
+    if 'email' in request.params:
+        params['email'] = request.params.get('email', '')
 
     if 'from' in params and params['from'] in _current_froms(ROOT, redirect_id):
         response.status = 403
         return { 'error':
-            "There's already a different redirect from %s. If you think"
-            "there shouldn't be, contact Tom." % redirect_id
+            u"There's already a different redirect from %s. If you think "
+            u"there shouldn't be, contact Tom." % params['from']
         }
     else:
         f = open(os.path.join(NGINX_SITES, '1-' + redirect_id), 'w')
         f.write(nginx_conf(params))
         f.close()
         response.status = 204
-        return
 
 @b.put('/v1/<redirect_id>')
 @api
@@ -99,24 +98,23 @@ def put(redirect_id):
         return {'error': 'You must specify the following addresses: "%s"' % '","'.join(missing_keys)}
 
     params = {
-        'from': request.query['from'],
-        'to': request.query['to'],
-        'status_code': int(request.query.get('status_code', 303)),
-        'email': request.query.get('email', ''),
+        'from': request.params['from'],
+        'to': request.params['to'],
+        'status_code': int(request.params.get('status_code', 303)),
+        'email': request.params.get('email', ''),
     }
         
     if params['from'] in _current_froms(ROOT, redirect_id):
         response.status = 403
         return { 'error':
-            "There's already a different redirect from %s. If you think"
-            "there shouldn't be, contact Tom." % redirect_id
+            u"There's already a different redirect from %s. If you think "
+            u"there shouldn't be, contact Tom." % params['from']
         }
     else:
         f = open(os.path.join(NGINX_SITES, '1-' + redirect_id), 'w')
         f.write(nginx_conf(params))
         f.close()
         response.status = 204
-        return
 
 @b.delete('/v1/<redirect_id>')
 @redirect_must_exist
@@ -124,7 +122,6 @@ def put(redirect_id):
 def delete(redirect_id):
     os.remove(redirect_filename(redirect_id))
     response.status = 204
-    return
 
 def _validate_redirect_id(redirect_id):
     if '/' in redirect_id:

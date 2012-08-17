@@ -214,7 +214,6 @@ class TestAuthorization:
             'status_code': 301,
         }
         r = requests.put(self.url_old, params)
-        print r.text
         sleep(1)
  
     def teardown(self):
@@ -255,11 +254,10 @@ class TestAuthorization:
         self._check_sameness_error(r)
 
     def _check_sameness_error(self, r):
-        print r.text
         data = json.loads(r.text)
         n.assert_equal(r.status_code, 403)
         n.assert_in('error', data)
-        n.assert_equal(data['error'], "There's already a different redirect from example.com. If you think there shouldn't be, contact Tom.")
+        n.assert_equal(data['error'], u"There's already a different redirect from example.com. If you think there shouldn't be, contact Tom.")
 
 def test_splash_page():
     "There should be a splash page at /"
