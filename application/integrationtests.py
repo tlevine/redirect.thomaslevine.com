@@ -267,8 +267,9 @@ class TestAuthorization:
 
 def test_splash_page():
     "There should be a splash page at /"
-    html = requests.get(API_DOMAIN + '/v1/').text
-    n.assert_in('https://github.com/tlevine/redirect.thomaslevine.com', html)
+    r = requests.get(API_DOMAIN, allow_redirects=False)
+    n.assert_equal(r.headers['Location'], 'https://github.com/tlevine/redirect.thomaslevine.com')
+    n.assert_equal(r.status_code, 303)
 
 if __name__ == '__main__':
     nose.main()

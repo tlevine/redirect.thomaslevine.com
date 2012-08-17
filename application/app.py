@@ -56,6 +56,11 @@ def api(api_request_func):
 
     return wrapper
 
+@b.get('/')
+def splash():
+    response.set_header('Location', 'https://github.com/tlevine/redirect.thomaslevine.com')
+    response.status = 303
+
 @b.get('/v1/')
 @b.post('/v1/')
 @b.put('/v1/')
