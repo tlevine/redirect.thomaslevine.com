@@ -4,12 +4,20 @@ from copy import copy
 import json
 from bottle import Bottle, run
 
-from settings import ROOT
+import settings
+if __name__ == "__main__":
+    ROOT = settings.ROOT_PRODUCTION
+else:
+    ROOT = settings.ROOT_TEST
+
 NGINX_SITES = os.path.join(ROOT, 'etc', 'nginx', 'conf.d')
 try:
     os.makedirs(NGINX_SITES)
 except OSError:
     pass
+def redirect_filename(redirect_id):
+    return os.path.join(NGINX_SITES, '1-' + redirect_id)
+
 
 b = Bottle()
 
@@ -18,18 +26,11 @@ def redirect_must_exist(api_request_func):
     'Return an HTTP error if the redirect doesn\'t exist.'
 
     def wrapper(redirect_id):
-        try:
-            data = api_request_func(redirect_id)
-        except IOError, e:
-            if re.match(r'/1-' + redirect_id + '\'$', e.message):
-                # The redirect file doesn't exist
-                return { "error": "That redirect doesn't exist. Use PUT to create it." }
-            else:
-                # Some other file doesn't exist
-                raise
+        if os.path.isfile(redirect_filename(redirect_id)):
+            return api_request_func(redirect_id)
         else:
-            # All is well
-            return data
+            # The redirect file doesn't exist
+            return { "error": "That redirect doesn't exist. Use PUT to create it." }
 
     return wrapper
 
@@ -44,7 +45,6 @@ def api(api_request_func):
         try:
             _validate_redirect_id(redirect_id)
         except ValueError, e:
-        #   return {'error': e.message}
             raise BadRequest(e.message)
 
         data = api_request_func(redirect_id)
@@ -56,17 +56,10 @@ def api(api_request_func):
     return wrapper
 
 @b.get('/v1/<redirect_id>')
-@api
 @redirect_must_exist
+@api
 def get(redirect_id):
-    try:
-        data = _open_nginx_redirect(redirect_id)
-    except IOError, e:
-        raise #print e.message
-        # File doesn't exist
-        return { "error": "That redirect doesn't exist. Use PUT to create it." }
-    else:
-        return data
+    return _open_nginx_redirect(redirect_id)
 
 @b.post('/v1/<redirect_id>')
 @api
@@ -149,8 +142,7 @@ def _parse_nginx_redirect(conf):
 
 
 def _open_nginx_redirect(redirect_id):
-    filename = os.path.join(NGINX_SITES, '1-' + redirect_id)
-    f = open(filename, 'r')
+    f = open(redirect_filename(redirect_id), 'r')
     data = _parse_nginx_conf(f.read())
     f.close()
     return data

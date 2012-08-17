@@ -157,4 +157,33 @@ class TestWriteNginxConfig:
         conf = app.nginx_conf(params)
         n.assert_in('baz@example.com;', conf)
 
+class TestRedirectMustExist:
+    'This should return an HTTP error if the redirect doesn\'t exist.'
+    def test_specified_file_does_not_exist(self):
+        def fail_to_open(foo):
+            open('/a/b/c/d', 'r')
+ 
+        observed = app.redirect_must_exist(fail_to_open)('elephant')
+        expected = { "error": "That redirect doesn't exist. Use PUT to create it." }
+        n.assert_dict_equal(observed, expected)
+
+    def test_other_file_does_not_exist(self):
+        open(os.path.join(app.NGINX_SITES, '1-foobar'), 'w').write('baz')
+        def fail_to_open(foo):
+            open('/a/b/c/d/e/f', 'r')
+ 
+        with n.assert_raises(IOError):
+            app.redirect_must_exist(fail_to_open)('foobar')
+
+    def test_specified_file_does_exist(self):
+        open(os.path.join(app.NGINX_SITES, '1-chainsaw'), 'w').write('baz')
+        def succeed_to_open(foo):
+            open(os.path.join(app.NGINX_SITES, '1-chainsaw'), 'r')
+            return {'yay': 'it works'}
+ 
+        observed = app.redirect_must_exist(succeed_to_open)('chainsaw')
+        expected = {'yay': 'it works'}
+        n.assert_dict_equal(observed, expected)
+
+
 nose.main()
