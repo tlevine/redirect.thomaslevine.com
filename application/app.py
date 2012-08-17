@@ -118,6 +118,14 @@ def put(redirect_id):
         response.status = 204
         return
 
+@b.delete('/v1/<redirect_id>')
+@redirect_must_exist
+@api
+def delete(redirect_id):
+    os.remove(redirect_filename(redirect_id))
+    response.status = 204
+    return
+
 def _validate_redirect_id(redirect_id):
     if '/' in redirect_id:
         raise ValueError('Request identifier contains a slash.')
