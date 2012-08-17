@@ -41,7 +41,7 @@ domain name service and web hosting.
 
 Let's say you want to redirect from [thomaslevine.com](http://thomaslevine.com) to [www.thomaslevine.com](http://www.thomaslevine.com).
 In this case, you need to add an A record that points "[thomaslevine.com](http://thomaslevine.com)" to
-"37.247.48.207". Depending on your provider, you might have to specify it in
+"108.174.51.19". Depending on your provider, you might have to specify it in
 one of a few days. Typically, the zone file editor assumes that you are
 managing subdomains, so you might need to enter "" (nothing),
 "[thomaslevine.com](http://thomaslevine.com)", or "@" in whatever form you're using. If you're editing the
