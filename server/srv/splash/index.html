@@ -23,6 +23,7 @@
 		<script src="assets/js/respond.min.js"></script>
 	</head>
 	<body>
+		<div id="dns-error" style="display: none;"><p>Please wait a minute for your redirect to be configured.</p></div>
 		<div id="main">
 			<h1>Chasing the wild goose</h1>
 			<p>
@@ -69,6 +70,11 @@
 		<script src="assets/js/jquery.js"></script>
 		<script src="assets/js/uuid.js"></script>
 		<script>
+			// If it looks like we need to reload the nginx conf because a different page is landing here, say so.
+			if (document.location.origin != 'http://rewrite.thomaslevine.com') {
+			  $('#dns-error').attr('style', '');
+			}
+
 			// Select the form
 			var f = $('#make-redirect');
 
