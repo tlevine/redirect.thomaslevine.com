@@ -172,9 +172,12 @@ def _validate_response_code(response_code):
         raise ValueError( 'Response code must be 301 or 303.' )
 
 def _validate_domain_name(domain_name):
-    for char in ';{}':
+    for char in ';{} ':
         if char in domain_name:
             raise ValueError('Domain name may not contain "%s".' % char)
+
+    if not domain_name:
+        raise ValueError('Domain name may not be empty.')
 
 def _add_http(url):
     if re.match(r'^https?://.*', url):

@@ -38,6 +38,16 @@ class TestValidation:
         "The domain name should contain a squaggle."
         app._validate_domain_name('http://example.com}')
 
+    @n.raises(ValueError)
+    def test_domain_name_space(self):
+        "The domain name should not contain a space."
+        app._validate_domain_name('Bagger 288')
+
+    @n.raises(ValueError)
+    def test_domain_name_empty(self):
+        "The domain name should not be the empty string."
+        app._validate_domain_name('')
+
 def test_add_http():
     '_add_http should add http:// if it isn\'t already there.'
     e = 'http://example.com/foo+bar'
