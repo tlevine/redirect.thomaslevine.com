@@ -69,13 +69,13 @@ def post(redirect_id):
     params = _open_nginx_redirect(redirect_id)
 
     if 'from' in request.query:
-        params['from'] = request.query['from'].encode('utf-8')
+        params['from'] = request.query['from']
     if 'to' in request.query:
-        params['to'] = request.query['to'].encode('utf-8')
+        params['to'] = request.query['to']
     if 'status_code' in request.query:
         params['status_code'] = int(request.query.get('status_code', 303))
     if 'email' in request.query:
-        params['email'] = request.query.get('email', '').encode('utf-8')
+        params['email'] = request.query.get('email', '')
 
     if 'from' in params and params['from'] in _current_froms(ROOT, redirect_id):
         response.status = 403
@@ -93,16 +93,16 @@ def post(redirect_id):
 @b.put('/v1/<redirect_id>')
 @api
 def put(redirect_id):
-    missing_keys = {'from', 'to'}.difference(request.query.keys())
-    if len(missing_keys) != 0:
+    missing_keys = {'from', 'to'}.difference(request.params.keys())
+    if missing_keys != set():
         response.status = 400
         return {'error': 'You must specify the following addresses: "%s"' % '","'.join(missing_keys)}
 
     params = {
-        'from': request.query['from'].encode('utf-8'),
-        'to': request.query['to'].encode('utf-8'),
+        'from': request.query['from'],
+        'to': request.query['to'],
         'status_code': int(request.query.get('status_code', 303)),
-        'email': request.query.get('email', '').encode('utf-8'),
+        'email': request.query.get('email', ''),
     }
         
     if params['from'] in _current_froms(ROOT, redirect_id):
@@ -188,14 +188,13 @@ def _open_nginx_redirect(redirect_id):
 
 def _current_froms(root, exclude):
     'Currently listed from addresses, excluding the one named $exclude'
-    confdir = os.path.join(root, 'etc', 'nginx', 'conf.d')
     froms = set()
-    for filename in os.listdir(confdir):
+    for filename in os.listdir(NGINX_SITES):
         if filename[0] == '0':
            continue
         elif filename == '1-' + exclude:
            continue
-        f = open(os.path.join(confdir, filename), 'r')
+        f = open(os.path.join(NGINX_SITES, filename), 'r')
         froms.add(_parse_nginx_redirect(f.read())['from'])
         f.close()
     return froms
@@ -220,7 +219,7 @@ def nginx_conf(orig_params):
 ''' % params
 
 def main():
-    run(b, host='localhost', port=9002)
+    run(b, host='localhost', port=settings.PORT)
 
 if __name__ == "__main__":
     main()

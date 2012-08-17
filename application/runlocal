@@ -1,0 +1,3 @@
+#!/bin/sh
+# This is a hack that uses local settings.
+python2 -c 'from app import *; main()'

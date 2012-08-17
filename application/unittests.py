@@ -168,12 +168,16 @@ class TestRedirectMustExist:
         n.assert_dict_equal(observed, expected)
 
     def test_other_file_does_not_exist(self):
-        open(os.path.join(app.NGINX_SITES, '1-foobar'), 'w').write('baz')
+        filename = os.path.join(app.NGINX_SITES, '1-foobar')
+        open(filename, 'w').write('baz')
         def fail_to_open(foo):
             open('/a/b/c/d/e/f', 'r')
  
         with n.assert_raises(IOError):
             app.redirect_must_exist(fail_to_open)('foobar')
+
+        # Clean up
+        os.remove(filename)
 
     def test_specified_file_does_exist(self):
         open(os.path.join(app.NGINX_SITES, '1-chainsaw'), 'w').write('baz')
