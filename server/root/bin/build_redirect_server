@@ -45,7 +45,9 @@ chown -r uwsgi: /srv/v1
 chmod +x /srv/v1/app.py
 
 # Daemon hack
+chmod +x /home/uwsgi/bin/start_pseudo_daemon
 su uwsgi -c 'echo "@reboot /home/uwsgi/bin/start_pseudo_daemon"'
+su uwsgi -c '/home/uwsgi/bin/start_pseudo_daemon'
 
 # Restart nginx to enable the new configuration.
 service nginx restart
