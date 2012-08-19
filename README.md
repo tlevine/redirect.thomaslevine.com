@@ -1,7 +1,30 @@
-Web forwards
+Web redirects
 =========================
-Web forwards, or HTTP redirects, should be easy, but I couldn't find any
-service I liked. Problems with existing services:
+## What do I mean by "web redirects"?
+They're also called web forwards, HTTP redirects and URL redirects. Here's the
+most common sort of HTTP redirect: I own
+[thomaslevine.com](http://thomaslevine.com),
+I host a website at
+[www.thomaslevine.com](http://www.thomaslevine.com),
+and I want
+[thomaslevine.com](http://thomaslevine.com) and
+[www.thomaslevine.com](http://www.thomaslevine.com)
+to go to the same place, so I make
+[thomaslevine.com](http://thomaslevine.com)
+redirect to
+[www.thomaslevine.com](http://www.thomaslevine.com).
+
+Wikipedia has [further thoughts](http://en.wikipedia.org/wiki/URL_redirection).
+More technically, this currently includes HTTP responses with codes of 301
+and 303, but it could include more. The relevant part is that these are tiny
+things that need a reliable server but don't need a big server.
+
+## Why
+I started needing these when I started hosting things on Amazon S3. Amason S3
+requires you to point CNAME records to Amazon, so you can't use bare domains.
+So I wanted to redirect the domains. I could do this with a proper server, but
+I was sure some other service already did this. But I couldn't find any service
+I liked. Problems with existing services:
 
 * The good ones are [DNS](http://freedns.afraid.org/) [hosting](http://dyn.com)
     that costs like $50 per year. Redirects don't need to be so expensive.
@@ -15,23 +38,6 @@ Given all these problems, I figured I'd make a service myself. For now, it's
 free. If shit tons of people start using it and I need to get another server
 or a bigger server, I'll need figure out how to make it sustainable, but it
 would still certainly be cheap.
-
-## What do I mean by "HTTP redirects"?
-Here's the most common sort of HTTP redirect: I own
-[thomaslevine.com](http://thomaslevine.com),
-I host a website at
-[www.thomaslevine.com](http://www.thomaslevine.com),
-and I want
-[thomaslevine.com](http://thomaslevine.com) and
-[www.thomaslevine.com](http://www.thomaslevine.com)
-to go to the same place, so I make
-[thomaslevine.com](http://thomaslevine.com)
-redirect to
-[www.thomaslevine.com](http://www.thomaslevine.com).
-
-More technically, this currently includes HTTP responses with codes of 301
-and 303, but it could include more. The relevant part is that these are tiny
-things that need a reliable server but don't need a big server.
 
 ## How to use: Set up DNS
 First, you need to add a record to your zone file with your DNS provider. If
