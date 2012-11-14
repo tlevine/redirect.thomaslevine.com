@@ -211,7 +211,7 @@ to clash, so I just used them as passwords by suggesting that they be made
 really long. The front-end does this for you without telling you; it generates
 a UUID for the identifier. You can see it by clicking "Show advanced options."
 
-### Scale limitations
+### Scaling
 It should be easy to adjust the nginx configuration to handle high load, but
 problems could arise if lots of people are editing lots of redirects with the
 ReST API. There isn't any particular thing that worries me much, but here are
