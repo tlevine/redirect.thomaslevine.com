@@ -245,10 +245,26 @@ Run `./bin/backup_redirect_server` to take backups. Set up a cron job to do
 this daily or so.
 
 ### Integration tests
-Run `./bin/integration_tests` to run integration tests on the live site. Set up
-a cron job to do this daily or so.
-
-## Development
 Run `./bin/runlocal` to run a server on [localhost:9002](http://localhost:9002).
 Then you can run `nosetests2 integrationtests.py` from `./application` to run
 integration tests locally.
+
+Run `./bin/integration_tests` to run integration tests on the live site. You
+could set up a cron job to do this daily or so.
+
+## Wishlist
+Here are some things I want.
+
+* I want different views in the front-end should have own URLs
+    (fragment identifiers) so that the back button can work and so that I can
+    link to places.
+* I want API should run in a real daemon, not a tmux, just because.
+* I want the configuration files should be prefixed with something later than
+    "1-", like maybe "50-", so that I can manually add other sites with higher
+    priority.
+* I want a system for backing up the nginx configuration with all of the
+    redirects to another server so that I can restore the redirects in case of
+    problems. A git repository in `/etc/nginx/conf.d/` should be fine for this.
+* I sort of want the Javascript on the front end to be less hacky and ugly, but
+    I haven't wanted to edit this at all, and it's been working just fine, so
+    maybe it's not that important.
