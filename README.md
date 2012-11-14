@@ -181,6 +181,36 @@ something like this
 
     curl -X DELETE http://redirect.thomaslevine.com/v1/sho+ue8ohn,.n237fun
 
+## Architecture
+Let's divide it into two parts.
+
+1. ReST API for editing nginx configuration files
+2. Nginx
+
+The ReST API (documented above) only reads and edits configuration files; it
+doesn't serve redirects. If you **delete** the ReST API and **run** Nginx,
+you will **not** be able to edit redirects, and the redirects **will** be served.
+If you turn **on** the ReST API and **uninstall** Nginx, your API queries
+**will** read and edit the nginx configuration files, and the redirects will
+**not** be served.
+
+This is very convenient; because Nginx handles all of the heavy traffic, I
+don't need to write an application that can handle substantial load. Also,
+if I notice a problem with the API, I can just disable it while I fix it.
+(This aspect hasn't been relevant because my code is so awesome.)
+
+### Front-end
+Aside from sites that the ReST API creates, Nginx serves the front-end clicky
+AJAX form for creating sites. The only interesting part about that is the
+selection of identifiers. First, this is what I mean by the "identifier".
+
+    http://redirect.thomaslevine.com/v1/:identifier
+
+The API requires that you select the identifier. It is thus possible for them
+to clash, so I just used them as passwords by suggesting that they be made
+really long. The front-end does this for you without telling you; it generates
+a UUID for the identifier. You can see it by clicking "Show advanced options."
+
 ## Hosting
 This runs on a tiny server from ChicagoVPS. The API is a uWSGI application that
 runs inside of a tmux because I didn't feel like making a proper ademon. It
