@@ -211,6 +211,30 @@ to clash, so I just used them as passwords by suggesting that they be made
 really long. The front-end does this for you without telling you; it generates
 a UUID for the identifier. You can see it by clicking "Show advanced options."
 
+### Scale limitations
+It should be easy to adjust the nginx configuration to handle high load, but
+problems could arise if lots of people are editing lots of redirects with the
+ReST API. There isn't any particular thing that worries me much, but here are
+some ideas of how to approach that.
+
+1. If lots of people are accessing your redirects (not the API), just run
+    multiple Nginx boxes with one API box; you can send the configuration file
+    directory from the API box to the Nginx boxes every so often.
+2. If you want to run multiple API boxes, consider why you need them, as this
+    situation would be a bit strange. Naively, I could suggest storing the
+    configuration files in GlusterFS and accessing this from all of the Nginx
+    and API boxes. But you might be able to make some convenient assumptions
+    in such a sitiation that would allow you to do something simpler.
+3. Depending on what filesystem you're using, having lots of files could be
+    problematic. I don't know whether it would noticeably impact Nginx. It
+    shouldn't be a problem for the API because it always looks for one
+    particular file. If you are using a stupid filesystem, you might hit
+    the limit on the number of files in a directory.
+4. If you are going to access the same API endpoint from many different
+    computers at similar times, you might want to think about whether there
+    are relevant race conditions in this API code. I don't think there are
+    any, but I haven't used this API like that.
+
 ## Hosting
 This runs on a tiny server from ChicagoVPS. The API is a uWSGI application that
 runs inside of a tmux because I didn't feel like making a proper ademon. It
